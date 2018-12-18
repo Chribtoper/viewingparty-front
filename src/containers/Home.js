@@ -5,7 +5,7 @@ import Rooms from '../components/Rooms.js'
 
 const USERS = "http://localhost:3000/users"
 
-export default class Home extends Component {
+class Home extends Component {
 
   state = {
     loginName: '',
@@ -94,3 +94,5 @@ export default class Home extends Component {
   }
 
 }
+
+export default Home

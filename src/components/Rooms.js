@@ -5,7 +5,7 @@ import CreateRoom from './CreateRoom.js'
 
 const ROOMS = "http://localhost:3000/rooms"
 
-export default class Rooms extends Component {
+class Rooms extends Component {
 
   constructor() {
     super()
@@ -174,3 +174,5 @@ export default class Rooms extends Component {
   }
 
 }
+
+export default Rooms
