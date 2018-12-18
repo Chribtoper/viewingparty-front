@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const NavBar = () => {
+const Nav = () => {
   return (
     <div style={{ borderBottom: '10px solid black', paddingBottom: '30px', marginBottom: '24px' }}>
       <NavLink
@@ -14,4 +14,4 @@ const NavBar = () => {
   );
 }
 
-export default NavBar;
+export default Nav;
