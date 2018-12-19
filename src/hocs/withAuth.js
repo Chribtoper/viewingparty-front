@@ -4,7 +4,7 @@ import { Redirect } from 'react-router'
 import { fetchCurrentUser } from '../actions/user'
 import { Loader } from 'semantic-ui-react'
 
-const usingAuth = () => {
+const withAuth = () => {
   return (
     <div> Gonna change this later bruh </div>
   )

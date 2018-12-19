@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom'
-import User from './components/User'
+import Profile from './components/Profile'
 import Login from './components/Login'
 import ActionCable from 'actioncable'
 import Nav from './components/Nav.js'

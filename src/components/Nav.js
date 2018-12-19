@@ -1,17 +1,26 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { Fragment } from 'react'
+import { connect } from 'react-redux'
+import { NavLink, withRouter } from 'react-router-dom'
+import { Menu } from 'semantic-ui-react'
 
-const Nav = () => {
+const Nav = ({ user: { loggedIn }, location: { pathname } }) => {
   return (
-    <div style={{ borderBottom: '10px solid black', paddingBottom: '30px', marginBottom: '24px' }}>
-      <NavLink
-        style={{ marginRight: '20px' }}
-        to="/"
-      >
-        Home
-      </NavLink>
-    </div>
-  );
+    <Menu pointing secondary>
+      {loggedIn ? (
+        <Fragment>
+          <Menu.Item as={NavLink} to="/profile" name="Profile" active={pathname === '/profile'} />
+          <Menu.Menu position="right">
+            {/* TODO: logout */}
+            {/* <Menu.Item to="/logout" name="Logout" onClick={logout} /> */}
+          </Menu.Menu>
+        </Fragment>
+      ) : (
+        <Menu.Item as={NavLink} to="/login" name="Login" active={pathname === '/login'} />
+      )}
+    </Menu>
+  )
 }
 
-export default Nav;
+const mapStateToProps = ({ usersReducer: user }) => ({ user })
+
+export default withRouter(connect(mapStateToProps)(Nav))
