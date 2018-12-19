@@ -63,4 +63,4 @@ const mapStateToProps = ({ usersReducer: { authenticatingUser, failedLogin, erro
   loggedIn
 })
 
-export default withRouter(connect(mapStateToProps, { loginUser })(LoginForm))
+export default withRouter(connect(mapStateToProps, { loginUser })(Login))
