@@ -2,20 +2,24 @@ import React, { Fragment } from 'react'
 import { connect } from 'react-redux'
 import { NavLink, withRouter } from 'react-router-dom'
 import { Menu } from 'semantic-ui-react'
+import { Route, Redirect } from 'react-router'
+import { logOut } from '../actions/user'
 
-const Nav = ({ user: { loggedIn }, location: { pathname } }) => {
+const Nav = (props/*{ user: { loggedIn }, location: { pathname } }*/) => {
+  // debugger
+
   return (
     <Menu pointing secondary>
-      {loggedIn ? (
+      {props.user.loggedIn ? (
         <Fragment>
-          <Menu.Item as={NavLink} to="/profile" name="Profile" active={pathname === '/profile'} />
           <Menu.Menu position="right">
+          <Menu.Item as={NavLink} to="/profile" name="Profile" active={props.location.pathname === '/profile'} />
             {/* TODO: logout */}
-            {/* <Menu.Item to="/logout" name="Logout" onClick={logout} /> */}
+          <Menu.Item to="/logout" name="Logout" onClick={()=>props.logOut()} />
           </Menu.Menu>
         </Fragment>
       ) : (
-        <Menu.Item as={NavLink} to="/login" name="Login" active={pathname === '/login'} />
+        <Menu.Item as={NavLink} to="/login" name="Login" active={props.location.pathname === '/login'} />
       )}
     </Menu>
   )
@@ -23,4 +27,10 @@ const Nav = ({ user: { loggedIn }, location: { pathname } }) => {
 
 const mapStateToProps = ({ usersReducer: user }) => ({ user })
 
-export default withRouter(connect(mapStateToProps)(Nav))
+const mapDispatchToProps = dispatch => {
+  return {
+    logOut: () => dispatch({ type: 'LOG_OUT' }, localStorage.clear())
+  }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Nav))

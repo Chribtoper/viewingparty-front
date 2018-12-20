@@ -6,7 +6,6 @@ import Profile from './components/Profile'
 import Login from './components/Login'
 import ActionCable from 'actioncable'
 import Nav from './components/Nav.js'
-import Home from './containers/Home.js'
 import Rooms from './components/Rooms.js'
 import NotFound from './components/notFound.js'
 
@@ -17,6 +16,7 @@ const App = (props) => {
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/rooms" />} />
           <Route exact path="/profile" component={Profile} />
+          <Route exact path="/rooms" component={Rooms} />
           <Route exact path="/login" component={Login} />
           <Route component={NotFound} />
         </Switch>

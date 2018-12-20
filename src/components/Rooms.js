@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import ActionCable from 'actioncable';
 import SendMessage from './SendMessage.js'
 import CreateRoom from './CreateRoom.js'
-
-const ROOMS = "http://localhost:3000/rooms"
+import withAuth from '../hocs/withAuth'
+import { connect } from 'react-redux'
 
 class Rooms extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
       this.state = {
         rooms: [],
         currentRoomId: null,
@@ -22,16 +22,23 @@ class Rooms extends Component {
   }
 
   componentDidMount() {
-    fetch(ROOMS)
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        "Content-Type": "application/json"
+      }
+    })
       .then(r => r.json())
       .then(rooms => this.setState({ rooms }));
   }
 
   createNewRoom = (e) => {
     e.preventDefault()
-    fetch(ROOMS, {
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms`, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -49,10 +56,11 @@ class Rooms extends Component {
     console.log(this.state.message)
     const roomId = this.state.currentRoomId
     const message = this.state.message
-    const userId = this.props.user_id
-    fetch(`${ROOMS}/${roomId}/messages`, {
+    const userId = null//this.props.userId
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}/messages`, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -79,7 +87,7 @@ class Rooms extends Component {
   }
 
   joinRoom = (currentRoomId) => {
-    this.setState({currentRoomId}, () =>{
+    this.setState({currentRoomId}, () => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
       const roomSubscription = this.cable.subscriptions.create(
         {
@@ -94,12 +102,18 @@ class Rooms extends Component {
         }}
       );
       this.setState({ roomSubscription }, () => {
-        fetch(`${ROOMS}/${currentRoomId}/messages`)
+        fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${currentRoomId}/messages`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+            "Content-Type": "application/json"
+          }
+        })
         .then(r=>r.json())
         .then(messages=>{
           this.setState({messages})
         })
-      });
+      })
     })
   }
 
@@ -175,4 +189,9 @@ class Rooms extends Component {
 
 }
 
-export default Rooms
+const mapStateToProps = ({ usersReducer: { user: { avatar, username } } }) => ({
+  avatar,
+  username
+})
+
+export default withAuth(connect(mapStateToProps)(Rooms))

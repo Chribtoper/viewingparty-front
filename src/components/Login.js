@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
-import { loginUser } from '../actions/user'
+import { loginUser } from '../actions/user.js'
 import { Button, Form, Segment, Message } from 'semantic-ui-react'
 
 class Login extends Component {
@@ -9,6 +9,7 @@ class Login extends Component {
   state = { username: '', password: '' }
 
   handleChange = (e, semanticInputData) => {
+
     this.setState({ [e.target.name]: e.target.value })
   }
 
@@ -33,17 +34,17 @@ class Login extends Component {
           <Message error header={this.props.failedLogin ? this.props.error : null} />
           <Form.Group widths="equal">
             <Form.Input
-              label="Username"
-              placeholder="Username"
-              name="Username"
+              label="username"
+              placeholder="username"
+              name="username"
               onChange={this.handleChange}
               value={this.state.username}
             />
             <Form.Input
-              type="Password"
-              label="Password"
-              placeholder="Password"
-              name="Password"
+              type="password"
+              label="password"
+              placeholder="password"
+              name="password"
               onChange={this.handleChange}
               value={this.state.password}
             />

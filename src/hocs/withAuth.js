@@ -30,14 +30,14 @@ const withAuth = /*FUNCTION*/ (WrappedComponent) => {
     }
   }
 
-  const mapStateToProps = /*FUNCTION*/ (reduxStoreState) => {
+  const mapStateToProps = (reduxStoreState) => {
     return {
       loggedIn: reduxStoreState.usersReducer.loggedIn,
       authenticatingUser: reduxStoreState.usersReducer.authenticatingUser
     }
   }
 
-  const mapDispatchToProps = /*FUNCTION*/ (dispatch) => {
+  const mapDispatchToProps = (dispatch) => {
     return {
       fetchCurrentUser: () => dispatch(fetchCurrentUser()), //dispatch is automagically provided by redux
     }
