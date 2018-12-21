@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ActionCable from 'actioncable';
 import SendMessage from './SendMessage.js'
 import CreateRoom from './CreateRoom.js'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 
@@ -122,7 +123,6 @@ class Rooms extends Component {
     return (
       <div>
         <h1> Rooms: </h1>
-        <ul>
           {this.state.rooms.map(room => (
             <button
               key={room.id}
@@ -132,7 +132,6 @@ class Rooms extends Component {
             </button>
           ))
           }
-        </ul>
       </div>
     )
   }

@@ -11,6 +11,7 @@ import * as serviceWorker from './serviceWorker';
 import 'semantic-ui-css/semantic.min.css'
 import usersReducer from './reducers/usersReducer'
 
+
 const rootReducer = combineReducers({ usersReducer: usersReducer })
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))

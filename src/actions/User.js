@@ -69,9 +69,6 @@ export const failedLogin = (errorMsg) => ({
   payload: errorMsg
 })
 
-export const logOut = () => ({
-  type: 'LOG_OUT'
-})
 // tell our app we're currently fetching
 export const authenticatingUser = () => ({ type: 'AUTHENTICATING_USER' })
 // export const authenticatingUser = () => {
