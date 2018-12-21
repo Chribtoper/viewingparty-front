@@ -5,6 +5,7 @@ import CreateRoom from './CreateRoom.js'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
+import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 
 class Rooms extends Component {
 
@@ -57,7 +58,7 @@ class Rooms extends Component {
     console.log(this.state.message)
     const roomId = this.state.currentRoomId
     const message = this.state.message
-    const userId = null//this.props.userId
+    const userId = this.props.id
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}/messages`, {
       method: "POST",
       headers: {
@@ -119,20 +120,20 @@ class Rooms extends Component {
   }
 
   roomSelection() {
-
     return (
-      <div>
-        <h1> Rooms: </h1>
+        <Card.Group itemsPerRow={2}>
           {this.state.rooms.map(room => (
-            <button
-              key={room.id}
+            <Card
+              image='https://i.ytimg.com/vi/Bd7MvHt3ui4/maxresdefault.jpg'
+              color='blue'
+              header={room.name}
               onClick={() => this.joinRoom(room.id)}
+              key={room.id}
             >
-              {room.name}
-            </button>
+            </Card>
           ))
           }
-      </div>
+        </Card.Group>
     )
   }
 
@@ -142,7 +143,7 @@ class Rooms extends Component {
     // .then(rooms=>this.setState({rooms})) REFACTOR THIS SO IT DOESNT LOOP THROUGH FETCHES
     return (
       <div>
-        <button
+        <Button negative
           onClick={() => {
             this.cable.subscriptions.remove(this.state.roomSubscription);
             this.setState(
@@ -154,43 +155,54 @@ class Rooms extends Component {
           }}
           >
             LeaveRoom
-        </button>
+        </Button>
       </div>
     )
   }
 
   render(){
     return (
-      <div>
-        {!this.state.currentRoomId ? this.roomSelection() : this.leaveRoom()}
-        {this.state.roomSubscription ? this.state.messages.map(msg => <li key={msg.id}>{msg.body}</li>) : null}
-        {!this.state.currentRoomId
-          ?
-            <div>
-              <CreateRoom
-                roomName={this.state.roomName}
-                setRoomName={this.setRoomName}
-                createNewRoom={this.createNewRoom}
-              />
-            </div>
-            :
-            <div>
-              <SendMessage
-                message={this.state.message}
-                handleMessage={this.handleMessage}
-                messageInput={this.messageInput}
-              />
-            </div>
-          }
-      </div>
+      <Container>
+        <Grid>
+          <Grid.Column width={11}>
+            {!this.state.currentRoomId ? this.roomSelection() : this.leaveRoom()}
+            {this.state.roomSubscription ? this.state.messages.map((msg) => {
+              return <li key={msg.id}>{msg.body}</li>
+            })
+               : null
+             }
+          </Grid.Column>
+          <Grid.Column width={4}>
+            {!this.state.currentRoomId
+              ?
+              <div>
+                <CreateRoom
+                  roomName={this.state.roomName}
+                  setRoomName={this.setRoomName}
+                  createNewRoom={this.createNewRoom}
+                />
+              </div>
+              :
+              <div>
+                <SendMessage
+                  message={this.state.message}
+                  handleMessage={this.handleMessage}
+                  messageInput={this.messageInput}
+                />
+              </div>
+            }
+          </Grid.Column>
+        </Grid>
+      </Container>
     )
   }
 
 }
 
-const mapStateToProps = ({ usersReducer: { user: { avatar, username } } }) => ({
+const mapStateToProps = ({ usersReducer: { user: { avatar, username, id } } }) => ({
   avatar,
-  username
+  username,
+  id
 })
 
 export default withAuth(connect(mapStateToProps)(Rooms))
