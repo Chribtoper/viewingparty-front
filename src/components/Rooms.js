@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import YouTube from 'react-youtube'
 
 class Rooms extends Component {
 
@@ -161,6 +162,13 @@ class Rooms extends Component {
   }
 
   render(){
+    const opts = {
+      height: '390',
+      width: '640',
+      playerVars: {
+        autoplay: 1
+      }
+    }
     return (
       <Container>
         <Grid>
@@ -171,6 +179,17 @@ class Rooms extends Component {
             })
                : null
              }
+            {this.state.roomSubscription
+              ?
+              <YouTube
+                videoId={'2g811Eo7K8U'}
+                opts={opts}
+                onReady={this._onReady}
+                onPause={this._onPause}
+              />
+              :
+              null
+            }
           </Grid.Column>
           <Grid.Column width={4}>
             {!this.state.currentRoomId
@@ -195,6 +214,14 @@ class Rooms extends Component {
         </Grid>
       </Container>
     )
+  }
+
+  _onReady(event) {
+    event.target.pauseVideo();
+  }
+
+  _onPause(e) {
+    debugger
   }
 
 }
