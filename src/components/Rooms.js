@@ -184,6 +184,12 @@ class Rooms extends Component {
     this.state.roomSubscription.send({body: 'play'})
   }
 
+  _onStateChange = (e) => {
+    // if (e.target.getCurrentTime() !== this.state.currentTime[Object.keys(this.state.currentTime)[0]]) {
+    //   e.target.seekTo(this.state.currentTime[Object.keys(this.state.currentTime)[0]], true)
+    // } SPAGHETTI CODEEEEEEE
+  }
+
   // _onStateChange = (e) => {
   //   this.state.roomSubscription.send({body: 'current_time', time: e.target.getCurrentTime()})
   //   console.log(this.state.currentTime)
@@ -252,6 +258,7 @@ class Rooms extends Component {
                 onReady={this._onReady}
                 onPause={this._onPause}
                 onPlay={this._onPlay}
+                onStateChange={this._onStateChange}
               />
               :
               null
