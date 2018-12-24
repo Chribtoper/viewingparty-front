@@ -18,7 +18,11 @@ class Rooms extends Component {
         roomSubscription: null,
         message: '',
         roomName: '',
-        messages: []
+        messages: [],
+        videos: [],
+        currentVideo: null,
+        currentTime: {},
+        randToken: null
       };
         this.messageInput = this.messageInput.bind(this)
         this.handleMessage = this.handleMessage.bind(this)
@@ -52,6 +56,13 @@ class Rooms extends Component {
       .then(r=>{
         this.joinRoom(r.id)
       })
+  }
+
+  handleYoutubeVid = (e) => {
+    e.preventDefault()
+    this.state.roomSubscription.send(
+      this.state.currentVideo.target.pauseVideo()
+    )
   }
 
   handleMessage = (e) => {
@@ -89,8 +100,17 @@ class Rooms extends Component {
     this.setState({roomName: input})
   }
 
+  generateRandToken = (length) => {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for(var i = 0; i < length; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+  }
+
   joinRoom = (currentRoomId) => {
-    this.setState({currentRoomId}, () => {
+    this.setState({currentRoomId: currentRoomId, randToken: this.generateRandToken(8)}, () => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
       const roomSubscription = this.cable.subscriptions.create(
         {
@@ -101,6 +121,18 @@ class Rooms extends Component {
           console.log("The data is:", data)
           if (data.title) {
             this.setState({messages: [...this.state.messages, data.body]})
+          }
+          if (data.body === 'pause') {
+            console.log(this.state)
+            this.state.currentVideo.target.pauseVideo()
+          }
+          if (data.body === 'play') {
+            console.log(this.state)
+            this.state.currentVideo.target.playVideo()
+          }
+          if (data.body === 'current_time') {
+            console.log(this.state)
+            this.setState({currentTime: data.time})
           }
         }}
       );
@@ -119,6 +151,44 @@ class Rooms extends Component {
       })
     })
   }
+
+  checkCurrentTimes = () => {
+    if (Object.keys(this.state.currentTime).length === 0) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  _onReady = (e) => {
+    this.setState({currentVideo: e})
+
+    if (e.target.getCurrentTime() === 0 && this.checkCurrentTimes()) {
+      e.target.seekTo(this.state.currentTime[Object.keys(this.state.currentTime)[0]], true)
+    }
+
+    const token = this.state.randToken
+    setInterval( () => {
+      let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
+      this.state.roomSubscription.send({body: 'current_time', time: currentTime})
+    }, 1000)
+
+  }
+
+  _onPause = (e) => {
+    console.log(this.state.roomSubscription)
+    this.state.roomSubscription.send({body: 'pause'})
+  }
+
+  _onPlay = (e) => {
+    this.state.roomSubscription.send({body: 'play'})
+  }
+
+  // _onStateChange = (e) => {
+  //   this.state.roomSubscription.send({body: 'current_time', time: e.target.getCurrentTime()})
+  //   console.log(this.state.currentTime)
+  // }
+
 
   roomSelection() {
     return (
@@ -174,22 +244,23 @@ class Rooms extends Component {
         <Grid>
           <Grid.Column width={11}>
             {!this.state.currentRoomId ? this.roomSelection() : this.leaveRoom()}
+            {this.state.roomSubscription
+              ?
+              <YouTube
+                videoId={'l38RaOLn8ec'}
+                opts={opts}
+                onReady={this._onReady}
+                onPause={this._onPause}
+                onPlay={this._onPlay}
+              />
+              :
+              null
+            }
             {this.state.roomSubscription ? this.state.messages.map((msg) => {
               return <li key={msg.id}>{msg.body}</li>
             })
                : null
              }
-            {this.state.roomSubscription
-              ?
-              <YouTube
-                videoId={'2g811Eo7K8U'}
-                opts={opts}
-                onReady={this._onReady}
-                onPause={this._onPause}
-              />
-              :
-              null
-            }
           </Grid.Column>
           <Grid.Column width={4}>
             {!this.state.currentRoomId
@@ -214,14 +285,6 @@ class Rooms extends Component {
         </Grid>
       </Container>
     )
-  }
-
-  _onReady(event) {
-    event.target.pauseVideo();
-  }
-
-  _onPause(e) {
-    debugger
   }
 
 }
