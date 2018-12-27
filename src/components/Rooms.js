@@ -7,6 +7,7 @@ import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
+import Room from './Room.js'
 
 class Rooms extends Component {
 
@@ -168,10 +169,15 @@ class Rooms extends Component {
     }
 
     const token = this.state.randToken
-    setInterval( () => {
-      let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
-      this.state.roomSubscription.send({body: 'current_time', time: currentTime})
-    }, 1000)
+
+    if (this.state.roomSubscription !== null) {
+      setInterval( () => {
+        let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
+        this.state.roomSubscription.send({body: 'current_time', time: currentTime})
+      }, 1000)
+    } else {
+      clearInterval() // AHHHHH IT NO WORK
+    }
 
   }
 
@@ -218,6 +224,7 @@ class Rooms extends Component {
     // fetch(ROOMS)
     // .then(r=>r.json())
     // .then(rooms=>this.setState({rooms})) REFACTOR THIS SO IT DOESNT LOOP THROUGH FETCHES
+    clearInterval()
     return (
       <div>
         <Button negative
