@@ -59,13 +59,6 @@ class Rooms extends Component {
       })
   }
 
-  handleYoutubeVid = (e) => {
-    e.preventDefault()
-    this.state.roomSubscription.send(
-      this.state.currentVideo.target.pauseVideo()
-    )
-  }
-
   handleMessage = (e) => {
     e.preventDefault()
     console.log(this.state.message)
