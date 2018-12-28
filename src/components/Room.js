@@ -1,9 +1,11 @@
 import React, { Component, Fragment } from 'react'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
-import { Route, withRouter } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import { fetchRooms } from '../actions/rooms.js'
+
 
 
 class Room extends Component {
@@ -19,23 +21,42 @@ class Room extends Component {
         videos: [],
         currentVideo: null,
         currentTime: {},
-        randToken: null
+        randToken: null,
+        currentRoom: null
       };
         this.messageInput = this.messageInput.bind(this)
         this.handleMessage = this.handleMessage.bind(this)
   }
 
   componentDidMount() {
-
+    const currentRoomId = this.props.match.params.roomId
+    this.findRoom(currentRoomId)
+    this.setState({
+      randToken: this.generateRandToken(8),
+      currentRoomId: currentRoomId,
+    })
+    this.socketConnect()
   }
 
   componentWillUnmount() {
+    console.log("unmounted")
+  }
 
+  findRoom = (roomId) => {
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        "Content-Type": "application/json"
+      }
+    })
+    .then(r=>r.json())
+    .then(currentRoom => this.setState({currentRoom}))
   }
 
   socketConnect = () => {
     const { currentRoomId } = this.props
-    this.setState({currentRoomId: currentRoomId, randToken: this.generateRandToken(8)}, () => {
+    this.setState({currentRoomId: currentRoomId}, () => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
       const roomSubscription = this.cable.subscriptions.create(
         {
@@ -202,10 +223,8 @@ class Room extends Component {
   }
 }
 
-const mapStateToProps = ({ usersReducer: { user: { avatar, username, id } } }) => ({
-  avatar,
-  username,
-  id
-})
+const mapStateToProps = (reduxStoreState) => {
+  return reduxStoreState
+}
 
-export default withAuth(connect(mapStateToProps)(withRouter(Room)))
+export default withAuth(connect(mapStateToProps, { fetchRooms })(withRouter(Room)))

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import SendMessage from './SendMessage.js'
 import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom'
 import withAuth from '../hocs/withAuth'
@@ -17,9 +17,13 @@ class RoomsPage extends Component {
   render(){
     return (
       <Container>
-        <RoomsList />
-        <Route exact path={this.props.match.url} />
-        <Route path={`${this.props.match.url}/:roomId`} render={routerProps => <Room {...routerProps} />} />
+        <Route exact path={this.props.match.url} render={() => (
+          <RoomsList />
+        )} />
+        <Route
+          path={`${this.props.match.url}/:roomId`}
+          render={routerProps => <Room {...routerProps} />} 
+        />
       </Container>
     )
   }

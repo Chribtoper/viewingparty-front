@@ -5,7 +5,7 @@ import CreateRoom from './CreateRoom.js'
 import { fetchRooms } from '../actions/rooms.js'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
-import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect, Link, Switch, withRouter } from 'react-router-dom'
 
 
 const RoomsList = (props) => {
@@ -29,12 +29,25 @@ const RoomsList = (props) => {
   }
   // TODO: find out how :roomId works
   const joinRoom = (currentRoomId) => {
-    return (<Route path={`/rooms/${currentRoomId}`} render={routerProps => <Room currentRoomId={currentRoomId} {...routerProps} />} />)
+    // return (<Route path={`/rooms/${currentRoomId}`} render={routerProps => <Room currentRoomId={currentRoomId} {...routerProps} />} />)
+
   }
 
   const renderRooms = (props) => {
     if (props.usersReducer.rooms) {
-      debugger
+      const rooms = props.usersReducer.rooms
+      return rooms.map(room => {
+        return (
+            <Card
+              image='https://i.ytimg.com/vi/Bd7MvHt3ui4/maxresdefault.jpg'
+              color='blue'
+              header={room.name}
+              key={room.id}
+              href={`/rooms/${room.id}`}
+            >
+            </Card>
+        )
+      })
     }
   }
 

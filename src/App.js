@@ -16,7 +16,7 @@ const App = (props) => {
           <Switch>
             <Route exact path="/" render={() => <Redirect to="/rooms" />} />
             <Route exact path="/profile" component={Profile} />
-            <Route exact path="/rooms" render={routerProps => <RoomsPage {...routerProps} />} />
+            <Route path="/rooms" render={routerProps => <RoomsPage {...routerProps} />} />
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
           </Switch>
