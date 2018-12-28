@@ -30,20 +30,20 @@ class Room extends Component {
 
   componentDidMount() {
     const currentRoomId = this.props.match.params.roomId
-    this.findRoom(currentRoomId)
     this.setState({
       randToken: this.generateRandToken(8),
       currentRoomId: currentRoomId,
     })
-    this.socketConnect()
+    this.findRoom(currentRoomId)
+    this.socketConnect(currentRoomId)
   }
 
   componentWillUnmount() {
     console.log("unmounted")
   }
 
-  findRoom = (roomId) => {
-    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}`, {
+  findRoom = (currentRoomId) => {
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${currentRoomId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt')}`,
@@ -54,8 +54,7 @@ class Room extends Component {
     .then(currentRoom => this.setState({currentRoom}))
   }
 
-  socketConnect = () => {
-    const { currentRoomId } = this.props
+  socketConnect = (currentRoomId) => {
     this.setState({currentRoomId: currentRoomId}, () => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
       const roomSubscription = this.cable.subscriptions.create(
@@ -218,7 +217,7 @@ class Room extends Component {
       }
     }
     return (
-      <h1>This is a room</h1>
+      <h1>Current Room: {this.state.currentRoom ? this.state.currentRoom.name : null}</h1>
     )
   }
 }
