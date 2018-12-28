@@ -3,7 +3,8 @@ const defaultState = {
   loggedIn: false,
   authenticatingUser: false,
   failedLogin: false,
-  error: null
+  error: null,
+  rooms: []
 }
 
 const usersReducer = (state=defaultState, action) => {
@@ -30,6 +31,11 @@ const usersReducer = (state=defaultState, action) => {
         authenticatingUser: false,
         failedLogin: false,
         error: null
+      }
+    case 'FETCH_ROOMS':
+      return {
+        ...state,
+        rooms: action.payload
       }
     default:
       return state

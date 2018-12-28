@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
-import { Route } from 'react-router-dom'
+import { Route, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 
@@ -208,4 +208,4 @@ const mapStateToProps = ({ usersReducer: { user: { avatar, username, id } } }) =
   id
 })
 
-export default withAuth(connect(mapStateToProps)(Room))
+export default withAuth(connect(mapStateToProps)(withRouter(Room)))

@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
 // import * as actions from '../actions'
 import { fetchCurrentUser } from '../actions/user'
+import { fetchRooms } from '../actions/rooms.js'
+
 import { Loader } from 'semantic-ui-react'
 
 const withAuth = /*FUNCTION*/ (WrappedComponent) => {
@@ -10,7 +12,10 @@ const withAuth = /*FUNCTION*/ (WrappedComponent) => {
     componentDidMount() {
       console.log('%c INSIDE COMPONENT DID MOUNT FOR AUTH HOC', 'color: purple')
       // POTENTIAL SECURITY FLAW!!! my tokens don't expire
-      if (localStorage.getItem('jwt') && !this.props.loggedIn) this.props.fetchCurrentUser()
+      if (localStorage.getItem('jwt') && !this.props.loggedIn) {
+        this.props.fetchCurrentUser();
+        this.props.fetchRooms();
+      }
       // if i have a token but don't know who it belongs to, ask the server for that user's data
     }
 
@@ -39,7 +44,8 @@ const withAuth = /*FUNCTION*/ (WrappedComponent) => {
 
   const mapDispatchToProps = (dispatch) => {
     return {
-      fetchCurrentUser: () => dispatch(fetchCurrentUser()), //dispatch is automagically provided by redux
+      fetchCurrentUser: () => dispatch(fetchCurrentUser()),
+      fetchRooms: () => dispatch(fetchRooms())
     }
   }
   //
@@ -47,7 +53,7 @@ const withAuth = /*FUNCTION*/ (WrappedComponent) => {
   // const connectedAuthorizedComponent = connectedToReduxHOC(AuthorizedComponent)
   // return connectedAuthorizedComponent
 
-  return connect(mapStateToProps, { fetchCurrentUser })(AuthorizedComponent)
+  return connect(mapStateToProps, { fetchCurrentUser, fetchRooms })(AuthorizedComponent)
 }
 
 export default withAuth
