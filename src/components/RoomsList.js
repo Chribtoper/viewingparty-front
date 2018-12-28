@@ -2,7 +2,6 @@ import React from 'react';
 import Room from './Room.js';
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import CreateRoom from './CreateRoom.js'
-import { fetchRooms } from '../actions/rooms.js'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Link, Switch, withRouter } from 'react-router-dom'
@@ -67,4 +66,4 @@ const mapStateToProps = (reduxStoreState) => {
   return reduxStoreState
 }
 
-export default withAuth(connect(mapStateToProps, { fetchRooms })(withRouter(RoomsList)))
+export default withAuth(connect(mapStateToProps)(withRouter(RoomsList)))

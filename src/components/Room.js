@@ -3,8 +3,9 @@ import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
-import { Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import { TextArea, Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
+import SendMessage from './SendMessage.js'
 
 class Room extends Component {
 
@@ -37,7 +38,25 @@ class Room extends Component {
   }
 
   componentWillUnmount() {
-    console.log("unmounted")
+    // let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
+    // this.state.roomSubscription.send({body: 'current_time', time: currentTime})
+    const currentTime = this.state.currentTime
+    const newTime = Object.keys(currentTime).reduce((object, key) => {
+      if (key !== this.state.randToken) {
+        object[key] = [key]
+      } return object
+    }, {})
+    debugger
+    this.state.roomSubscription.send({body: 'current_time', time: newTime})
+    this.cable.subscriptions.remove(this.state.roomSubscription)
+    console.log("Succesfully cleared subscription")
+    clearInterval()
+    this.setState(
+      { roomSubscription: null },
+      () => {
+        console.log("roomSubscription is now null")
+      }
+    )
   }
 
   findRoom = (currentRoomId) => {
@@ -161,10 +180,7 @@ class Room extends Component {
         let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
         this.state.roomSubscription.send({body: 'current_time', time: currentTime})
       }, 1000)
-    } else {
-      clearInterval() // AHHHHH IT NO WORK
     }
-
   }
 
   _onPause = (e) => {
@@ -247,7 +263,11 @@ class Room extends Component {
             lower left
           </Grid.Column>
           <Grid.Column width={8}>
-            lower right
+            <SendMessage
+              message={this.state.message}
+              handleMessage={this.handleMessage}
+              messageInput={this.messageInput}
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>

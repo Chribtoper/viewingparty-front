@@ -8,6 +8,7 @@ import ActionCable from 'actioncable'
 import RoomsPage from './components/RoomsPage.js'
 import NotFound from './components/notFound.js'
 import Nav from './components/Nav.js'
+import Register from './components/Register'
 
 const App = (props) => {
   return (
@@ -18,6 +19,7 @@ const App = (props) => {
             <Route exact path="/profile" component={Profile} />
             <Route path="/rooms" render={routerProps => <RoomsPage {...routerProps} />} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
             <Route component={NotFound} />
           </Switch>
     </Fragment>

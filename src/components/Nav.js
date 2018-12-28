@@ -13,7 +13,6 @@ const Nav = (props) => {
           <Menu.Menu position="right">
           <Menu.Item as={NavLink} to="/profile" name="Profile" active={props.location.pathname === '/profile'} />
           <Menu.Item as={NavLink} to="/rooms" name="Rooms" active={props.location.pathname === '/rooms'} />
-            {/* TODO: logout */}
           <Menu.Item to="/logout" name="Logout" onClick={()=>props.logOut()} />
           </Menu.Menu>
         </Fragment>

@@ -1,3 +1,4 @@
+
 export const /*FUNCTION*/ loginUser = (username, password) => {
   return /*FUNCTION*/ (dispatch) => { //thunk
     // console.log(process.env.REACT_APP_API_ENDPOINT)
@@ -33,7 +34,7 @@ export const /*FUNCTION*/ loginUser = (username, password) => {
       .then(JSONResponse => {
         console.log('%c INSIDE YE OLDE .THEN', 'color: navy')
         localStorage.setItem('jwt', JSONResponse.jwt)
-        dispatch({ type: 'SET_CURRENT_USER', payload: JSONResponse.user })
+        dispatch({ type: 'SET_CURRENT_USER', payload: JSONResponse.user });
         // dispatch(setCurrentUser(JSONResponse.user))
       })
       .catch(r => r.json().then(e => dispatch({ type: 'FAILED_LOGIN', payload: e.message })))
