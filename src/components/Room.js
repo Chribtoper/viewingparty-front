@@ -3,10 +3,8 @@ import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
-import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
-import { fetchRooms } from '../actions/rooms.js'
-
-
+import { Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import YouTube from 'react-youtube'
 
 class Room extends Component {
 
@@ -184,6 +182,12 @@ class Room extends Component {
     // } SPAGHETTI CODEEEEEEE
   }
 
+  renderMessages = () => {
+    return this.state.messages.map(message => {
+      return <Message floating key={message.id}>Username: {message.body}</Message>
+    })
+  }
+
   leaveRoom() {
     // fetch(ROOMS)
     // .then(r=>r.json())
@@ -217,7 +221,36 @@ class Room extends Component {
       }
     }
     return (
-      <h1>Current Room: {this.state.currentRoom ? this.state.currentRoom.name : null}</h1>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={8}>
+            <Segment padded='very' compact>
+              <YouTube
+                videoId={'l38RaOLn8ec'}
+                opts={opts}
+                onReady={this._onReady}
+                onPause={this._onPause}
+                onPlay={this._onPlay}
+                onStateChange={this._onStateChange}
+              />
+            </Segment>
+          </Grid.Column>
+          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='right' stretched width={8}>
+            <Segment padded='very' compact>
+              {this.renderMessages()}
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+
+        <Grid.Row>
+          <Grid.Column width={8}>
+            lower left
+          </Grid.Column>
+          <Grid.Column width={8}>
+            lower right
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     )
   }
 }
@@ -226,4 +259,4 @@ const mapStateToProps = (reduxStoreState) => {
   return reduxStoreState
 }
 
-export default withAuth(connect(mapStateToProps, { fetchRooms })(withRouter(Room)))
+export default withAuth(connect(mapStateToProps)(withRouter(Room)))

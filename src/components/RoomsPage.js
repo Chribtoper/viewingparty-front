@@ -16,15 +16,15 @@ class RoomsPage extends Component {
 
   render(){
     return (
-      <Container>
+      <Fragment>
         <Route exact path={this.props.match.url} render={() => (
           <RoomsList />
         )} />
         <Route
           path={`${this.props.match.url}/:roomId`}
-          render={routerProps => <Room {...routerProps} />} 
+          render={routerProps => <Room {...routerProps} />}
         />
-      </Container>
+      </Fragment>
     )
   }
 }

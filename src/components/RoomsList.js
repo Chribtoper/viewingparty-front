@@ -27,11 +27,6 @@ const RoomsList = (props) => {
         this.joinRoom(r.id)
       })
   }
-  // TODO: find out how :roomId works
-  const joinRoom = (currentRoomId) => {
-    // return (<Route path={`/rooms/${currentRoomId}`} render={routerProps => <Room currentRoomId={currentRoomId} {...routerProps} />} />)
-
-  }
 
   const renderRooms = (props) => {
     if (props.usersReducer.rooms) {
@@ -52,17 +47,19 @@ const RoomsList = (props) => {
   }
 
   return (
-    <Grid>
-      <Grid.Column width={11}>
-        <Card.Group itemsPerRow={2}>
-          {renderRooms(props)}
-        </Card.Group>
+    <Container>
+      <Grid>
+        <Grid.Column width={11}>
+          <Card.Group itemsPerRow={2}>
+            {renderRooms(props)}
+          </Card.Group>
 
-      </Grid.Column>
-      <Grid.Column width={4}>
-          <h1>This is where createRoom will go</h1>
-      </Grid.Column>
-    </Grid>
+        </Grid.Column>
+        <Grid.Column width={4}>
+            <h1>This is where createRoom will go</h1>
+        </Grid.Column>
+      </Grid>
+    </Container>
   )
 }
 
