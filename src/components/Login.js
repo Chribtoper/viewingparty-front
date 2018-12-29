@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
-import { loginUser } from '../actions/user.js'
+import { Link } from 'react-router-dom'
+import { loginUser, resetRegistered } from '../actions/user.js'
 import { fetchRooms } from '../actions/rooms.js'
 import { Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
 
 class Login extends Component {
 
   state = { username: '', password: '' }
+
+  componentDidMount(){
+    this.props.resetRegistered()
+  }
 
   handleChange = (e, semanticInputData) => {
     this.setState({ [e.target.name]: e.target.value })
@@ -59,7 +64,7 @@ class Login extends Component {
           </Grid.Column>
 
           <Grid.Column verticalAlign='middle'>
-            <Button content='Sign up' icon='signup' size='massive' />
+            <Button as={ Link } to='/register' content='Register' icon='signup' size='massive' />
           </Grid.Column>
         </Grid>
 
@@ -77,4 +82,4 @@ const mapStateToProps = ({ usersReducer: { authenticatingUser, failedLogin, erro
   loggedIn
 })
 
-export default withRouter(connect(mapStateToProps, { loginUser, fetchRooms })(Login))
+export default withRouter(connect(mapStateToProps, { loginUser, fetchRooms, resetRegistered })(Login))

@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Room from './Room.js';
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import CreateRoom from './CreateRoom.js'
 import withAuth from '../hocs/withAuth'
+import { fetchRooms } from '../actions/rooms.js'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Link, Switch, withRouter } from 'react-router-dom'
 
 
-const RoomsList = (props) => {
+class RoomsList extends Component {
 
-  const createNewRoom = (e) => {
+  state = {
+    roomName: '',
+    redirected: false,
+    roomId: null
+  }
+
+  setRoomName = (e) => {
+    const input = e.target.value
+    this.setState({roomName: input})
+  }
+
+  createNewRoom = (e) => {
     e.preventDefault()
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms`, {
       method: "POST",
@@ -21,15 +33,23 @@ const RoomsList = (props) => {
         name: this.state.roomName
       })
     })
-      .then(r=>r.json())
-      .then(r=>{
-        this.joinRoom(r.id)
+    .then(r=>{
+      console.log(this.props.usersReducer.rooms)
+      this.props.fetchRooms()
+      .then(()=>{
+        const rooms = this.props.usersReducer.rooms
+        const roomId = rooms[Object.keys(rooms)[Object.keys(rooms).length - 1]].id
+        this.setState({
+          redirected: true,
+          roomId: roomId
+        })
       })
+    })
   }
 
-  const renderRooms = (props) => {
-    if (props.usersReducer.rooms) {
-      const rooms = props.usersReducer.rooms
+  renderRooms = () => {
+    if (this.props.usersReducer.rooms) {
+      const rooms = this.props.usersReducer.rooms
       return rooms.map(room => {
         return (
             <Card
@@ -45,25 +65,39 @@ const RoomsList = (props) => {
     }
   }
 
-  return (
+  render() {
+  return this.state.redirected ? (
+    <Redirect to={`rooms/${this.state.roomId}`} render={window.location.reload()} />
+  ) : (
     <Container>
       <Grid>
         <Grid.Column width={11}>
           <Card.Group itemsPerRow={2}>
-            {renderRooms(props)}
+            {this.renderRooms()}
           </Card.Group>
 
         </Grid.Column>
         <Grid.Column width={4}>
-            <h1>This is where createRoom will go</h1>
+            <CreateRoom
+              roomName={this.state.roomName}
+              setRoomName={this.setRoomName}
+              createNewRoom={this.createNewRoom}
+              />
         </Grid.Column>
       </Grid>
     </Container>
-  )
+    )
+  }
 }
 
 const mapStateToProps = (reduxStoreState) => {
   return reduxStoreState
 }
 
-export default withAuth(connect(mapStateToProps)(withRouter(RoomsList)))
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchRooms: () => dispatch(fetchRooms())
+  }
+}
+
+export default withAuth(connect(mapStateToProps, { fetchRooms })(withRouter(RoomsList)))

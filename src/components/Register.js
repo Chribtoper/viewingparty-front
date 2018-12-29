@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
-import { loginUser } from '../actions/user.js'
-import { fetchRooms } from '../actions/rooms.js'
+import { Link } from 'react-router-dom'
+import { fetchRegister, loginUser } from '../actions/user.js'
 import { Header, Image, Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
 
 class Register extends Component {
@@ -20,18 +20,18 @@ class Register extends Component {
 
   //Note: Semantic forms include preventDefault
   handleSubmit = (e) => {
-    this.props.loginUser(this.state.username, this.state.password)
-    this.setState({ username: '', password: '' })
+    this.props.fetchRegister(this.state.username, this.state.password, this.state.bio, this.state.url)
+    this.setState({ username: '', password: '', bio: '', url: '' })
   }
 
   render() {
-    return this.props.loggedIn ? (
+    return this.props.registered ? (
       <Redirect to="/login"/>
     ) : (
       <Segment placeholder>
-        <Header as='h1' textAlign='center'>      
+        <Header as='h1' textAlign='left'>
           <Image
-            circular src={this.state.url} /> Register an account!
+            circular src={this.state.url} /> Register your own ViewingParty account!
         </Header>
         <Grid
           columns={2}
@@ -47,9 +47,9 @@ class Register extends Component {
             size="huge"
             key="huge"
             loading={this.props.authenticatingUser}
-            error={this.props.failedLogin}
+            error={this.props.failedRegister}
           >
-            <Message error header={this.props.failedLogin ? this.props.error : null} />
+            <Message error header={this.props.failedRegister ? this.props.error : null} />
             <Form.Input
               icon='user'
               iconPosition='left'
@@ -94,18 +94,24 @@ class Register extends Component {
                 <Button type="submit" size='huge' content='Register' primary />
           </Form>
           </Grid.Column>
+          <Grid.Column verticalAlign='middle'>
+            <Button as={ Link } to='/login' content='Login' icon='user' size='massive' />
+          </Grid.Column>
         </Grid>
+        <Divider vertical>Or</Divider>
       </Segment>
     )
   }
 }
 
 // Destructuring the state of the reduxStoreState to avoid all the dots
-const mapStateToProps = ({ usersReducer: { authenticatingUser, failedLogin, error, loggedIn } }) => ({
+const mapStateToProps = ({ usersReducer: { authenticatingUser, failedLogin, error, loggedIn, failedRegister, registered } }) => ({
   authenticatingUser,
   failedLogin,
   error,
-  loggedIn
+  loggedIn,
+  failedRegister,
+  registered
 })
 
-export default withRouter(connect(mapStateToProps, { loginUser, fetchRooms })(Register))
+export default withRouter(connect(mapStateToProps, { fetchRegister, loginUser })(Register))

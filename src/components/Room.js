@@ -15,7 +15,6 @@ class Room extends Component {
         currentRoomId: null,
         roomSubscription: null,
         message: '',
-        roomName: '',
         messages: [],
         videos: [],
         currentVideo: null,
@@ -46,17 +45,16 @@ class Room extends Component {
         object[key] = [key]
       } return object
     }, {})
-    debugger
     this.state.roomSubscription.send({body: 'current_time', time: newTime})
     this.cable.subscriptions.remove(this.state.roomSubscription)
     console.log("Succesfully cleared subscription")
+    debugger
+    this.clearInterval()
+    this.setState({ roomSubscription: null })
+  }
+
+  clearInterval = () => {
     clearInterval()
-    this.setState(
-      { roomSubscription: null },
-      () => {
-        console.log("roomSubscription is now null")
-      }
-    )
   }
 
   findRoom = (currentRoomId) => {
@@ -72,7 +70,6 @@ class Room extends Component {
   }
 
   socketConnect = (currentRoomId) => {
-    this.setState({currentRoomId: currentRoomId}, () => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
       const roomSubscription = this.cable.subscriptions.create(
         {
@@ -81,7 +78,7 @@ class Room extends Component {
         },
         { received: data => {
           console.log("The data is:", data)
-          if (data.title) {
+          if (data.title==="New message") {
             this.setState({messages: [...this.state.messages, data.body]})
           }
           if (data.body === 'pause') {
@@ -111,7 +108,6 @@ class Room extends Component {
           this.setState({messages})
         })
       })
-    })
   }
 
   handleMessage = (e) => {
@@ -119,7 +115,9 @@ class Room extends Component {
     console.log(this.state.message)
     const roomId = this.state.currentRoomId
     const message = this.state.message
-    const userId = this.props.id
+    const userId = this.props.usersReducer.user.id
+    const username = this.props.usersReducer.user.username
+    const avatar = this.props.usersReducer.user.avatar
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}/messages`, {
       method: "POST",
       headers: {
@@ -129,7 +127,9 @@ class Room extends Component {
       body: JSON.stringify({
         body: message,
         user_id: userId,
-        room_id: roomId
+        room_id: roomId,
+        userName: username,
+        icon: avatar
       })
     })
     .then(r=>r.json())
@@ -143,11 +143,6 @@ class Room extends Component {
     const input = e.target.value
     this.setState({message: input})
   } // deals with the message input on change
-
-  setRoomName = (e) => {
-    const input = e.target.value
-    this.setState({roomName: input})
-  }
 
   generateRandToken = (length) => {
       var text = "";
@@ -200,7 +195,14 @@ class Room extends Component {
 
   renderMessages = () => {
     return this.state.messages.map(message => {
-      return <Message floating key={message.id}>Username: {message.body}</Message>
+        return (
+          <p>
+          <div>
+            <Image src={message.icon} avatar />
+            <span>{message.userName}: {message.body}</span>
+          </div>
+          </p>
+        )
     })
   }
 

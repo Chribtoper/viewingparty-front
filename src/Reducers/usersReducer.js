@@ -3,6 +3,8 @@ const defaultState = {
   loggedIn: false,
   authenticatingUser: false,
   failedLogin: false,
+  failedRegister: false,
+  registered: false,
   error: null,
   rooms: []
 }
@@ -22,6 +24,27 @@ const usersReducer = (state=defaultState, action) => {
         failedLogin: true,
         error: action.payload,
         authenticatingUser: false
+      }
+    case 'FAILED_REGISTER':
+      return {
+        ...state,
+        failedRegister: true,
+        error: action.payload,
+        authenticatingUser: false,
+        registered: false
+      }
+    case 'REGISTERED':
+      return {
+        ...state,
+        failedRegister: false,
+        error: null,
+        authenticatingUser: false,
+        registered: true
+      }
+    case 'RESET_REGISTERED':
+      return {
+        ...state,
+        registered: false
       }
     case 'LOG_OUT':
       return {
