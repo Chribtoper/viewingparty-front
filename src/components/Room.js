@@ -20,7 +20,9 @@ class Room extends Component {
         currentVideo: null,
         currentTime: {},
         randToken: null,
-        currentRoom: null
+        currentRoom: null,
+        users: [],
+        userRoomId: null
       };
         this.messageInput = this.messageInput.bind(this)
         this.handleMessage = this.handleMessage.bind(this)
@@ -34,23 +36,24 @@ class Room extends Component {
     })
     this.findRoom(currentRoomId)
     this.socketConnect(currentRoomId)
+    this.userRoom(currentRoomId, this.props.usersReducer.user.id)
   }
 
   componentWillUnmount() {
+    this.removeUserRoom(this.state.userRoomId)
     // let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
     // this.state.roomSubscription.send({body: 'current_time', time: currentTime})
-    const currentTime = this.state.currentTime
-    const newTime = Object.keys(currentTime).reduce((object, key) => {
-      if (key !== this.state.randToken) {
-        object[key] = [key]
-      } return object
-    }, {})
-    this.state.roomSubscription.send({body: 'current_time', time: newTime})
-    this.cable.subscriptions.remove(this.state.roomSubscription)
-    console.log("Succesfully cleared subscription")
-    debugger
-    this.clearInterval()
-    this.setState({ roomSubscription: null })
+    // const currentTime = this.state.currentTime
+    // const newTime = Object.keys(currentTime).reduce((object, key) => {
+    //   if (key !== this.state.randToken) {
+    //     object[key] = [key]
+    //   } return object
+    // }, {})
+    // this.state.roomSubscription.send({body: 'current_time', time: newTime})
+    // this.cable.subscriptions.remove(this.state.roomSubscription)
+    // console.log("Succesfully cleared subscription")
+    // this.clearInterval()
+    // this.setState({ roomSubscription: null })
   }
 
   clearInterval = () => {
@@ -58,42 +61,94 @@ class Room extends Component {
   }
 
   findRoom = (currentRoomId) => {
-    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${currentRoomId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        "Content-Type": "application/json"
-      }
+    return new Promise ((resolve, reject) => {
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${currentRoomId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          "Content-Type": "application/json"
+        }
+      })
+      .then(r=>r.json())
+      .then(currentRoom => this.setState({currentRoom}))
+      resolve()
     })
-    .then(r=>r.json())
-    .then(currentRoom => this.setState({currentRoom}))
+  }
+
+  userRoom = (roomId, userId) => {
+    return new Promise ((resolve, reject) => {
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/user_rooms`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          room_id: roomId,
+        })
+      })
+      .then(r=>r.json())
+      .then(r=> {
+        this.setState({userRoomId: r.id})
+      })
+      resolve()
+    })
+  }
+
+  removeUserRoom = (userRoomId) => {
+    return new Promise ((resolve, reject) => {
+      fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/user_rooms/${userRoomId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          "Content-Type": "application/json"
+        }
+      })
+      resolve()
+    })
   }
 
   socketConnect = (currentRoomId) => {
+    return new Promise ((resolve, reject) => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
       const roomSubscription = this.cable.subscriptions.create(
         {
           channel: "RoomsChannel",
-          room_id: this.state.currentRoomId
+          room_id: currentRoomId,
         },
         { received: data => {
-          console.log("The data is:", data)
-          if (data.title==="New message") {
-            this.setState({messages: [...this.state.messages, data.body]})
+            switch (data.title) {
+              case "New message":
+                this.setState({messages: [...this.state.messages, data.body]})
+                break
+              case 'joined_room':
+                this.setState({users: [...this.state.users, data.body]})
+                if (!this.state.users.includes(data.body)) {
+                  this.state.roomSubscription.send({title: 'check_users', body: data.body})
+                }
+                console.log(this.state)
+                break
+              case 'check_users':
+                this.setState({users: [...this.state.users, data.body]})
+                console.log(this.state)
+                break
+              case 'pause':
+                console.log(this.state)
+                this.state.currentVideo.target.pauseVideo()
+                break
+              case 'play':
+                console.log(this.state)
+                this.state.currentVideo.target.playVideo()
+                break
+              case 'current_time':
+                console.log(this.state)
+                this.setState({currentTime: data.time})
+                break
+              default: console.log("The data is:", data)
+            }
           }
-          if (data.body === 'pause') {
-            console.log(this.state)
-            this.state.currentVideo.target.pauseVideo()
-          }
-          if (data.body === 'play') {
-            console.log(this.state)
-            this.state.currentVideo.target.playVideo()
-          }
-          if (data.body === 'current_time') {
-            console.log(this.state)
-            this.setState({currentTime: data.time})
-          }
-        }}
+        }
       );
       this.setState({ roomSubscription }, () => {
         fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${currentRoomId}/messages`, {
@@ -106,8 +161,11 @@ class Room extends Component {
         .then(r=>r.json())
         .then(messages=>{
           this.setState({messages})
+          this.state.roomSubscription.send({title: 'joined_room', body: this.props.usersReducer.user})
         })
       })
+      resolve()
+    })
   }
 
   handleMessage = (e) => {
@@ -164,27 +222,27 @@ class Room extends Component {
   _onReady = (e) => {
     this.setState({currentVideo: e})
 
-    if (e.target.getCurrentTime() === 0 && this.checkCurrentTimes()) {
-      e.target.seekTo(this.state.currentTime[Object.keys(this.state.currentTime)[0]], true)
-    }
-
-    const token = this.state.randToken
-
-    if (this.state.roomSubscription !== null) {
-      setInterval( () => {
-        let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
-        this.state.roomSubscription.send({body: 'current_time', time: currentTime})
-      }, 1000)
-    }
+    // if (e.target.getCurrentTime() === 0 && this.checkCurrentTimes()) {
+    //   e.target.seekTo(this.state.currentTime[Object.keys(this.state.currentTime)[0]], true)
+    // }
+    //
+    // const token = this.state.randToken
+    //
+    // if (this.state.roomSubscription !== null) {
+    //   setInterval( () => {
+    //     let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
+    //     this.state.roomSubscription.send({title: 'current_time', time: currentTime})
+    //   }, 1000)
+    // }
   }
 
   _onPause = (e) => {
     console.log(this.state.roomSubscription)
-    this.state.roomSubscription.send({body: 'pause'})
+    this.state.roomSubscription.send({title: 'pause'})
   }
 
   _onPlay = (e) => {
-    this.state.roomSubscription.send({body: 'play'})
+    this.state.roomSubscription.send({title: 'play'})
   }
 
   _onStateChange = (e) => {
@@ -196,11 +254,9 @@ class Room extends Component {
   renderMessages = () => {
     return this.state.messages.map(message => {
         return (
-          <p>
-          <div>
+          <p key={message.id}>
             <Image src={message.icon} avatar />
             <span>{message.userName}: {message.body}</span>
-          </div>
           </p>
         )
     })
