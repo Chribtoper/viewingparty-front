@@ -6,6 +6,8 @@ import ActionCable from 'actioncable';
 import { Label, Feed, TextArea, Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
 import SendMessage from './SendMessage.js'
+import SendVideo from './SendVideo.js'
+import { fetchYoutubes } from '../actions/rooms.js'
 
 class Room extends Component {
 
@@ -17,6 +19,8 @@ class Room extends Component {
         message: '',
         messages: [],
         videos: [],
+        youtubeInput: '',
+        youtubePlayer: null,
         currentVideo: null,
         currentTime: null,
         randToken: null,
@@ -44,7 +48,7 @@ class Room extends Component {
 
   componentWillUnmount() {
     // this.removeUserRoom(this.state.userRoomId)
-    // let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
+    // let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.youtubePlayer.target.getCurrentTime()})
     // this.state.roomSubscription.send({body: 'current_time', time: currentTime})
     // const currentTime = this.state.currentTime
     // const newTime = Object.keys(currentTime).reduce((object, key) => {
@@ -93,6 +97,9 @@ class Room extends Component {
                 // debugger
                 this.setState({messages: [...this.state.messages, data.body]})
                 break
+              case 'new_youtube_vid':
+                this.setState({youtubes: [...this.state.videos, data.body]})
+                break
               case 'User joined':
                 console.log(data.body + ' has joined')
                 break
@@ -103,11 +110,11 @@ class Room extends Component {
                 break
               case 'pause':
                 console.log(this.state)
-                this.state.currentVideo.target.pauseVideo()
+                this.state.youtubePlayer.target.pauseVideo()
                 break
               case 'play':
                 console.log(this.state)
-                this.state.currentVideo.target.playVideo()
+                this.state.youtubePlayer.target.playVideo()
                 break
               case 'current_time':
                 this.setState({currentTime: data.time})
@@ -139,6 +146,10 @@ class Room extends Component {
           this.setState({messages})
           // this.state.roomSubscription.send({title: 'joined_room', body: this.props.usersReducer.user})
         })
+      })
+      fetchYoutubes(currentRoomId)
+      .then(videos => {
+        this.setState({videos})
       })
       resolve()
     })
@@ -178,7 +189,37 @@ class Room extends Component {
     this.setState({message: input})
   } // deals with the message input on change
 
+  handleYoutubeFetch = (e) => {
+    const roomId = this.state.currentRoomId
+    const userId = this.props.usersReducer.user.id
+    const videoUrl = this.state.youtubeInput
+    e.preventDefault()
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}/youtubes`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        room_id: roomId,
+        video_url: videoUrl
+      })
+    })
+    .then(r=>r.json())
+    .then(response => {
+      console.log(`Sent a youtube: ${response}`)
+      this.setState({youtubeInput: ''})
+    })
+  }
+
+  youtubeInputUrl = (e) => {
+    const input = e.target.value
+    this.setState({youtubeInput: input})
+  } // deals with the message input on change
+
   generateRandToken = (length) => {
+      length = 8
       var text = "";
       var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       for(var i = 0; i < length; i++) {
@@ -196,7 +237,7 @@ class Room extends Component {
   }
 
   _onReady = (e) => {
-    this.setState({currentVideo: e})
+    this.setState({youtubePlayer: e})
     // this.setState({currentTime: this.state.currentTime})
     // if (this.props.usersReducer.user.id === this.state.users[0].id) {
     if (this.props.usersReducer.user.id === this.state.users[0].id) {
@@ -228,10 +269,15 @@ class Room extends Component {
     // } SPAGHETTI CODEEEEEEE
   }
 
+  setCurrentVid = (e) => {
+    const currentVideo = { code: e.target.name, url: e.target.src }
+    this.setState({currentVideo})
+  }
+
   renderMessages = () => {
     return this.state.messages.map(message => {
         return (
-          <p key={message.id}>
+          <p key={this.generateRandToken()}>
             <Image src={message.icon} avatar />
             <span>{message.userName}: {message.body}</span>
           </p>
@@ -239,18 +285,29 @@ class Room extends Component {
     })
   }
 
+  renderVideos = () => {
+    return this.state.videos.map(video => {
+      const regex = /v=(.*)/
+      const code = video.video_url.match(regex)[1]
+      const url = `https://img.youtube.com/vi/${code}/default.jpg`
+        return (
+          <Image name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small' />
+        )
+    })
+  }
+
   hostLoop = () => {
-    if (this.state.currentVideo) {
+    if (this.state.youtubePlayer) {
       this.intervalOne = setInterval( () => {
-        this.state.roomSubscription.send({title: 'current_time', time: this.state.currentVideo.target.getCurrentTime()})
+        this.state.roomSubscription.send({title: 'current_time', time: this.state.youtubePlayer.target.getCurrentTime()})
       }, 1000)
     }
   }
 
   userLoop = () => {
     this.intervalTwo = setInterval( () => {
-      if (Math.abs(this.state.currentVideo.target.getCurrentTime() - this.state.currentTime) > 3) {
-        this.state.currentVideo.target.seekTo(this.state.currentTime, true)
+      if (Math.abs(this.state.youtubePlayer.target.getCurrentTime() - this.state.currentTime) > 3) {
+        this.state.youtubePlayer.target.seekTo(this.state.currentTime, true)
       }
     }, 1000)
   }
@@ -259,23 +316,27 @@ class Room extends Component {
     return this.state.users.map(user => {
       if (user.id === this.state.users[0].id){
         return (
-          <p key={user.id}>
-          <Label color='yellow' image>
-            <img src={user.avatar} />
-            {user.username}
-            <Label.Detail>host</Label.Detail>
-          </Label>
-          </p>
+          <Fragment key={this.generateRandToken()}>
+            <br/>
+            <Label color='yellow' image>
+              <img src={user.avatar} />
+              {user.username}
+              <Label.Detail>host</Label.Detail>
+            </Label>
+            <br/>
+          </Fragment>
         )
       } else {
         return (
-          <p key={user.id}>
-          <Label color='blue' image>
-            <img src={user.avatar} />
-            {user.username}
-            <Label.Detail>user</Label.Detail>
-          </Label>
-          </p>
+          <Fragment key={this.generateRandToken()}>
+            <br/>
+            <Label color='blue' image>
+              <img src={user.avatar} />
+              {user.username}
+              <Label.Detail>user</Label.Detail>
+            </Label>
+            <br/>
+          </Fragment>
         )
       }
 
@@ -362,8 +423,15 @@ class Room extends Component {
         </Grid.Row>
 
         <Grid.Row>
-          <Grid.Column width={8}>
-            lower left
+          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='left' stretched width={8}>
+            <SendVideo
+              youtubeInput={this.state.youtubeInput}
+              youtubeInputUrl={this.youtubeInputUrl}
+              handleYoutubeFetch={this.handleYoutubeFetch}
+            />
+              <Image.Group style={{ whiteSpace: 'nowrap', height: 130, overflowY: 'hidden', overflowX: 'auto' }} size='small'>
+                {this.renderVideos()}
+              </Image.Group>
           </Grid.Column>
           <Grid.Column width={8}>
             <SendMessage
