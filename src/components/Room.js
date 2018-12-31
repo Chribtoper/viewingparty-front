@@ -24,6 +24,8 @@ class Room extends Component {
         users: [],
         userRoomId: null,
         loaded: false,
+        host: false,
+        redirect: false
       };
         this.messageInput = this.messageInput.bind(this)
         this.handleMessage = this.handleMessage.bind(this)
@@ -51,7 +53,9 @@ class Room extends Component {
     //   } return object
     // }, {})
     // this.state.roomSubscription.send({body: 'current_time', time: newTime})
-    clearInterval()
+    // this.state.roomSubscription.send({title:'host_change', body: this.state.users})
+    clearInterval(this.intervalOne)
+    clearInterval(this.intervalTwo)
     this.cable.subscriptions.remove(this.state.roomSubscription)
     console.log("Succesfully cleared subscription")
     // this.clearInterval()
@@ -107,6 +111,15 @@ class Room extends Component {
                 break
               case 'current_time':
                 this.setState({currentTime: data.time})
+                break
+              case 'host_change':
+                // setTimeout(()=>{
+                  // this.setState({users: data.body})
+                  if (this.props.usersReducer.user.id === this.state.users[0].id) {
+                    clearInterval(this.intervalTwo)
+                    this.hostLoop()
+                  }
+                // }, 1000)
                 break
               default: console.log("The data is:", data)
             }
@@ -185,15 +198,17 @@ class Room extends Component {
   _onReady = (e) => {
     this.setState({currentVideo: e})
     // this.setState({currentTime: this.state.currentTime})
+    // if (this.props.usersReducer.user.id === this.state.users[0].id) {
     if (this.props.usersReducer.user.id === this.state.users[0].id) {
-      setInterval( () => {
+      this.intervalOne = setInterval( () => {
         this.state.roomSubscription.send({title: 'current_time', time: e.target.getCurrentTime()})
       }, 1000)
     } else {
       e.target.seekTo(this.state.currentTime, true)
-      setInterval( () => {
-        if (Math.abs(e.target.getCurrentTime() - this.state.currentTime) > 3)
-        e.target.seekTo(this.state.currentTime, true)
+      this.intervalTwo = setInterval( () => {
+        if (Math.abs(e.target.getCurrentTime() - this.state.currentTime) > 3) {
+          e.target.seekTo(this.state.currentTime, true)
+        }
       }, 1000)
     }
   }
@@ -222,6 +237,22 @@ class Room extends Component {
           </p>
         )
     })
+  }
+
+  hostLoop = () => {
+    if (this.state.currentVideo) {
+      this.intervalOne = setInterval( () => {
+        this.state.roomSubscription.send({title: 'current_time', time: this.state.currentVideo.target.getCurrentTime()})
+      }, 1000)
+    }
+  }
+
+  userLoop = () => {
+    this.intervalTwo = setInterval( () => {
+      if (Math.abs(this.state.currentVideo.target.getCurrentTime() - this.state.currentTime) > 3) {
+        this.state.currentVideo.target.seekTo(this.state.currentTime, true)
+      }
+    }, 1000)
   }
 
   renderUsers = () => {
