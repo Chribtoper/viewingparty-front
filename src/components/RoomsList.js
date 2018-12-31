@@ -71,7 +71,7 @@ class RoomsList extends Component {
   ) : (
     <Container>
       <Grid>
-        <Grid.Column width={11}>
+        <Grid.Column style={{overflow: 'auto', maxHeight: window.innerHeight }} width={11}>
           <Card.Group itemsPerRow={2}>
             {this.renderRooms()}
           </Card.Group>

@@ -3,7 +3,7 @@ import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
-import { TextArea, Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import { Label, Feed, TextArea, Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
 import SendMessage from './SendMessage.js'
 
@@ -18,11 +18,12 @@ class Room extends Component {
         messages: [],
         videos: [],
         currentVideo: null,
-        currentTime: {},
+        currentTime: null,
         randToken: null,
         currentRoom: null,
         users: [],
-        userRoomId: null
+        userRoomId: null,
+        loaded: false,
       };
         this.messageInput = this.messageInput.bind(this)
         this.handleMessage = this.handleMessage.bind(this)
@@ -34,13 +35,13 @@ class Room extends Component {
       randToken: this.generateRandToken(8),
       currentRoomId: currentRoomId,
     })
-    this.findRoom(currentRoomId)
+    // this.findRoom(currentRoomId)
     this.socketConnect(currentRoomId)
-    this.userRoom(currentRoomId, this.props.usersReducer.user.id)
+
   }
 
   componentWillUnmount() {
-    this.removeUserRoom(this.state.userRoomId)
+    // this.removeUserRoom(this.state.userRoomId)
     // let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
     // this.state.roomSubscription.send({body: 'current_time', time: currentTime})
     // const currentTime = this.state.currentTime
@@ -50,14 +51,11 @@ class Room extends Component {
     //   } return object
     // }, {})
     // this.state.roomSubscription.send({body: 'current_time', time: newTime})
-    // this.cable.subscriptions.remove(this.state.roomSubscription)
-    // console.log("Succesfully cleared subscription")
+    clearInterval()
+    this.cable.subscriptions.remove(this.state.roomSubscription)
+    console.log("Succesfully cleared subscription")
     // this.clearInterval()
     // this.setState({ roomSubscription: null })
-  }
-
-  clearInterval = () => {
-    clearInterval()
   }
 
   findRoom = (currentRoomId) => {
@@ -75,40 +73,6 @@ class Room extends Component {
     })
   }
 
-  userRoom = (roomId, userId) => {
-    return new Promise ((resolve, reject) => {
-      fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/user_rooms`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          room_id: roomId,
-        })
-      })
-      .then(r=>r.json())
-      .then(r=> {
-        this.setState({userRoomId: r.id})
-      })
-      resolve()
-    })
-  }
-
-  removeUserRoom = (userRoomId) => {
-    return new Promise ((resolve, reject) => {
-      fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/user_rooms/${userRoomId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-          "Content-Type": "application/json"
-        }
-      })
-      resolve()
-    })
-  }
-
   socketConnect = (currentRoomId) => {
     return new Promise ((resolve, reject) => {
       this.cable = ActionCable.createConsumer("ws://localhost:3000/cable");
@@ -116,22 +80,22 @@ class Room extends Component {
         {
           channel: "RoomsChannel",
           room_id: currentRoomId,
+          user_id: this.props.usersReducer.user.id
         },
         { received: data => {
+          console.log(data)
             switch (data.title) {
               case "New message":
+                // debugger
                 this.setState({messages: [...this.state.messages, data.body]})
                 break
-              case 'joined_room':
-                this.setState({users: [...this.state.users, data.body]})
-                if (!this.state.users.includes(data.body)) {
-                  this.state.roomSubscription.send({title: 'check_users', body: data.body})
-                }
-                console.log(this.state)
+              case 'User joined':
+                console.log(data.body + ' has joined')
                 break
-              case 'check_users':
-                this.setState({users: [...this.state.users, data.body]})
-                console.log(this.state)
+              case 'All users':
+                console.log(data.body)
+                this.setState({users: data.body})
+                this.setState({loaded: true})
                 break
               case 'pause':
                 console.log(this.state)
@@ -142,7 +106,6 @@ class Room extends Component {
                 this.state.currentVideo.target.playVideo()
                 break
               case 'current_time':
-                console.log(this.state)
                 this.setState({currentTime: data.time})
                 break
               default: console.log("The data is:", data)
@@ -161,7 +124,7 @@ class Room extends Component {
         .then(r=>r.json())
         .then(messages=>{
           this.setState({messages})
-          this.state.roomSubscription.send({title: 'joined_room', body: this.props.usersReducer.user})
+          // this.state.roomSubscription.send({title: 'joined_room', body: this.props.usersReducer.user})
         })
       })
       resolve()
@@ -221,19 +184,18 @@ class Room extends Component {
 
   _onReady = (e) => {
     this.setState({currentVideo: e})
-
-    // if (e.target.getCurrentTime() === 0 && this.checkCurrentTimes()) {
-    //   e.target.seekTo(this.state.currentTime[Object.keys(this.state.currentTime)[0]], true)
-    // }
-    //
-    // const token = this.state.randToken
-    //
-    // if (this.state.roomSubscription !== null) {
-    //   setInterval( () => {
-    //     let currentTime = Object.assign({...this.state.currentTime}, {[token]: this.state.currentVideo.target.getCurrentTime()})
-    //     this.state.roomSubscription.send({title: 'current_time', time: currentTime})
-    //   }, 1000)
-    // }
+    // this.setState({currentTime: this.state.currentTime})
+    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+      setInterval( () => {
+        this.state.roomSubscription.send({title: 'current_time', time: e.target.getCurrentTime()})
+      }, 1000)
+    } else {
+      e.target.seekTo(this.state.currentTime, true)
+      setInterval( () => {
+        if (Math.abs(e.target.getCurrentTime() - this.state.currentTime) > 3)
+        e.target.seekTo(this.state.currentTime, true)
+      }, 1000)
+    }
   }
 
   _onPause = (e) => {
@@ -262,29 +224,83 @@ class Room extends Component {
     })
   }
 
-  leaveRoom() {
-    // fetch(ROOMS)
-    // .then(r=>r.json())
-    // .then(rooms=>this.setState({rooms})) REFACTOR THIS SO IT DOESNT LOOP THROUGH FETCHES
-    clearInterval()
-    return (
-      <div>
-        <Button negative
-          onClick={() => {
-            this.cable.subscriptions.remove(this.state.roomSubscription);
-            this.setState(
-              { currentRoomId: null, roomSubscription: null, messages: []},
-              () => {
-                console.log("Succesfully cleared subscription")
-              }
-            )
-          }}
-          >
-            LeaveRoom
-        </Button>
-      </div>
-    )
+  renderUsers = () => {
+    return this.state.users.map(user => {
+      if (user.id === this.state.users[0].id){
+        return (
+          <p key={user.id}>
+          <Label color='yellow' image>
+            <img src={user.avatar} />
+            {user.username}
+            <Label.Detail>host</Label.Detail>
+          </Label>
+          </p>
+        )
+      } else {
+        return (
+          <p key={user.id}>
+          <Label color='blue' image>
+            <img src={user.avatar} />
+            {user.username}
+            <Label.Detail>user</Label.Detail>
+          </Label>
+          </p>
+        )
+      }
+
+    })
   }
+
+  renderYoutube = () => {
+
+      if (this.state.currentTime!==null || (this.props.usersReducer.user.id === this.state.users[0].id)) {
+      // if (this.state.currentTime!==null || 1 === 1) {
+        const opts = {
+          height: '390',
+          width: '640',
+          playerVars: {
+            autoplay: 1
+          }
+        }
+        return (<YouTube
+                videoId={'l38RaOLn8ec'}
+                opts={opts}
+                onReady={this._onReady}
+                onPause={this._onPause}
+                onPlay={this._onPlay}
+                onStateChange={this._onStateChange}
+              />)
+      } else {
+        setTimeout( () => {
+          this.renderYoutube()
+        }, 1000)
+      }
+  }
+
+
+  // leaveRoom() {
+  //   // fetch(ROOMS)
+  //   // .then(r=>r.json())
+  //   // .then(rooms=>this.setState({rooms})) REFACTOR THIS SO IT DOESNT LOOP THROUGH FETCHES
+  //   clearInterval()
+  //   return (
+  //     <div>
+  //       <Button negative
+  //         onClick={() => {
+  //           this.cable.subscriptions.remove(this.state.roomSubscription);
+  //           this.setState(
+  //             { currentRoomId: null, roomSubscription: null, messages: []},
+  //             () => {
+  //               console.log("Succesfully cleared subscription")
+  //             }
+  //           )
+  //         }}
+  //         >
+  //           LeaveRoom
+  //       </Button>
+  //     </div>
+  //   )
+  // }
 
   render(){
     const opts = {
@@ -299,19 +315,17 @@ class Room extends Component {
         <Grid.Row>
           <Grid.Column width={8}>
             <Segment padded='very' compact>
-              <YouTube
-                videoId={'l38RaOLn8ec'}
-                opts={opts}
-                onReady={this._onReady}
-                onPause={this._onPause}
-                onPlay={this._onPlay}
-                onStateChange={this._onStateChange}
-              />
+              {this.state.loaded ? this.renderYoutube() : null}
             </Segment>
           </Grid.Column>
-          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='right' stretched width={8}>
+          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='right' stretched width={4}>
             <Segment padded='very' compact>
               {this.renderMessages()}
+            </Segment>
+          </Grid.Column>
+          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='right' stretched width={4}>
+            <Segment padded='very' compact>
+              {this.renderUsers()}
             </Segment>
           </Grid.Column>
         </Grid.Row>
