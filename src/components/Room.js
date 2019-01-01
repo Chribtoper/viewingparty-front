@@ -136,11 +136,11 @@ class Room extends Component {
                 break
               case 'receive_videos':
                 this.setState({videos: data.body})
-                  if (!this.state.videos.length===0) {
+                  if (this.state.videos.length>0) {
                     const currentVideo = { url: this.regexUrl(data.body[0].video_url), id: data.body[0].id }
                     this.setState({currentVideo})
                     this.state.youtubePlayer.target.playVideo()
-                  } else {
+                  } else if (this.state.videos.length===0) {
                     this.handleOpen()
                   }
                 break
@@ -254,10 +254,12 @@ class Room extends Component {
     if (this.state.messages) {
       return this.state.messages.map(message => {
           return (
-            <p key={this.generateRandToken()}>
-              <Image src={message.icon} avatar />
-              <span>{message.userName}: {message.body}</span>
-            </p>
+            <Message key={this.generateRandToken()}>
+              <Message.Header><Image src={message.icon} avatar /><span>{message.userName}</span></Message.Header>
+              <p>
+                {message.body}
+              </p>
+            </Message>
           )
       })
     }
@@ -312,7 +314,7 @@ class Room extends Component {
           return (
             <Fragment key={this.generateRandToken()}>
               <br/>
-              <Label color='yellow' image>
+              <Label size='big' color='yellow' image>
                 <img src={user.avatar} />
                 {user.username}
                 <Label.Detail>host</Label.Detail>
@@ -324,7 +326,7 @@ class Room extends Component {
           return (
             <Fragment key={this.generateRandToken()}>
               <br/>
-              <Label color='blue' image>
+              <Label size='big' color='blue' image>
                 <img src={user.avatar} />
                 {user.username}
                 <Label.Detail>user</Label.Detail>
@@ -417,7 +419,7 @@ class Room extends Component {
   }
 
   _onError = (e) => {
-    if (this.state.videos.length<1){
+    if (this.state.videos.length===0){
       this.handleOpen()
     }
   }
