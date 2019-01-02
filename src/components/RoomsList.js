@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Room from './Room.js';
-import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import { Item, Header, Sidebar, Menu, Icon, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import CreateRoom from './CreateRoom.js'
 import withAuth from '../hocs/withAuth'
 import { fetchRooms } from '../actions/rooms.js'
 import { connect } from 'react-redux'
-import { BrowserRouter as Router, Route, Redirect, Link, Switch, withRouter } from 'react-router-dom'
-
+import { BrowserRouter as Router, Route, NavLink, Redirect, Link, Switch, withRouter } from 'react-router-dom'
 
 class RoomsList extends Component {
 
@@ -52,40 +51,63 @@ class RoomsList extends Component {
       const rooms = this.props.usersReducer.rooms
       return rooms.map(room => {
         return (
-            <Card
-              image='https://i.ytimg.com/vi/Bd7MvHt3ui4/maxresdefault.jpg'
-              color='blue'
-              header={room.name}
-              key={room.id}
-              href={`/rooms/${room.id}`}
-            >
-            </Card>
+          <Card
+            raised
+            header={room.name}
+            size="large"
+            key={room.id}
+            color='blue'
+            href={`/rooms/${room.id}`}
+            image={room.url}
+          >
+          </Card>
         )
       })
     }
   }
 
   render() {
-  return this.state.redirected ? (
-    <Redirect to={`rooms/${this.state.roomId}`} render={window.location.reload()} />
-  ) : (
-    <Container>
-      <Grid>
-        <Grid.Column style={{overflow: 'auto', maxHeight: window.innerHeight }} width={11}>
-          <Card.Group itemsPerRow={2}>
-            {this.renderRooms()}
-          </Card.Group>
+    return (
+    <Sidebar.Pushable fluid style={{ background: '#201c2b', borderRadius: '10px' }} as={Segment}>
+      <Sidebar style={{ background: '#17111e', borderRadius: '10px' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
+        <Menu.Item style={{height: window.innerHeight/4 }}>
+          <CreateRoom
+            roomName={this.state.roomName}
+            setRoomName={this.setRoomName}
+            createNewRoom={this.createNewRoom}
+            />
+        </Menu.Item>
+        <Menu.Item icon='home' size='massive' style={{height: window.innerHeight/4 }} as={NavLink} to="/profile" name="Profile" active={this.props.location.pathname === '/profile'}>
+          <Image centered src='http://www.entypo.com/images/user.svg' style={{height: window.innerHeight/7 }} />
+        </Menu.Item>
+        <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/rooms" name="Rooms" active={this.props.location.pathname === '/rooms'}>
+          <Image centered src='http://www.entypo.com/images/home.svg' style={{height: window.innerHeight/7 }} />
+        </Menu.Item>
+        <Menu.Item style={{height: window.innerHeight/4 }} to="/logout" name="Logout" onClick={()=>this.props.logOut()}>
+          <Image centered src='http://www.entypo.com/images/log-out.svg' style={{height: window.innerHeight/7 }} />
+        </Menu.Item>
+      </Sidebar>
 
-        </Grid.Column>
-        <Grid.Column width={4}>
-            <CreateRoom
-              roomName={this.state.roomName}
-              setRoomName={this.setRoomName}
-              createNewRoom={this.createNewRoom}
-              />
-        </Grid.Column>
-      </Grid>
-    </Container>
+        <Sidebar.Pusher>
+          <Segment basic>
+            { this.state.redirected ?
+              <Redirect to={`/rooms/${this.state.roomId}`} render={window.location.reload()} />
+                :
+                <Grid celled='internally'>
+                  <Grid.Column style={{overflow: 'auto', maxHeight: window.innerHeight }} width={11}>
+                    <Card.Group itemsPerRow={2}>
+                      {this.renderRooms()}
+                    </Card.Group>
+
+                  </Grid.Column>
+                  <Grid.Column width={4}>
+
+                  </Grid.Column>
+                </Grid>
+            }
+          </Segment>
+        </Sidebar.Pusher>
+      </Sidebar.Pushable>
     )
   }
 }
@@ -96,8 +118,9 @@ const mapStateToProps = (reduxStoreState) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchRooms: () => dispatch(fetchRooms())
+    fetchRooms: () => dispatch(fetchRooms()),
+    logOut: () => dispatch({ type: 'LOG_OUT' }, localStorage.clear())
   }
 }
 
-export default withAuth(connect(mapStateToProps, { fetchRooms })(withRouter(RoomsList)))
+export default withAuth(connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomsList)))

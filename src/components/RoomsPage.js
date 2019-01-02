@@ -8,6 +8,7 @@ import YouTube from 'react-youtube'
 import Room from './Room.js'
 import { fetchRooms } from '../actions/rooms.js'
 import RoomsList from './RoomsList.js'
+import Nav from './Nav.js'
 
 class RoomsPage extends Component {
 

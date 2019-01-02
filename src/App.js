@@ -7,13 +7,11 @@ import Login from './components/Login'
 import ActionCable from 'actioncable'
 import RoomsPage from './components/RoomsPage.js'
 import NotFound from './components/notFound.js'
-import Nav from './components/Nav.js'
 import Register from './components/Register'
 
 const App = (props) => {
   return (
     <Fragment>
-        <Nav />
           <Switch>
             <Route exact path="/" render={() => <Redirect to="/rooms" />} />
             <Route exact path="/profile" component={Profile} />

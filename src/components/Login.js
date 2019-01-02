@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import { loginUser, resetRegistered } from '../actions/user.js'
 import { fetchRooms } from '../actions/rooms.js'
-import { Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
+import { Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
+import video from './particle.mp4'
 
 class Login extends Component {
 
@@ -28,10 +29,10 @@ class Login extends Component {
     return this.props.loggedIn ? (
       <Redirect to="/rooms"/>
     ) : (
-
-      <Segment placeholder>
-        <Grid columns={2} relaxed='very' stackable>
-          <Grid.Column>
+      <Container style={{ flex: 1, resizeMode: 'cover', height: window.innerHeight, width: window.innerWidth }}>
+        <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' relaxed='very' stackable>
+          <Grid.Column style={{ maxWidth: 450 }}>
+          <Segment style={{ background: '#6f5b8c' }} raised padded='very'>
           <Form
             onSubmit={this.handleSubmit}
             size="huge"
@@ -43,7 +44,7 @@ class Login extends Component {
             <Form.Input
               icon='user'
               iconPosition='left'
-              label="username"
+              label="Username"
               placeholder="username"
               name="username"
               onChange={this.handleChange}
@@ -53,23 +54,26 @@ class Login extends Component {
               icon='lock'
               iconPosition='left'
               type="password"
-              label="password"
+              label="Password"
               placeholder="password"
               name="password"
               onChange={this.handleChange}
               value={this.state.password}
             />
-            <Button type="submit" content='Login' primary />
-          </Form>
-          </Grid.Column>
-
-          <Grid.Column verticalAlign='middle'>
+            <Button type="submit" content='Login' size='massive' primary />
+            <Divider horizontal>Or</Divider>
             <Button as={ Link } to='/register' content='Register' icon='signup' size='massive' />
+          </Form>
+          </Segment>
           </Grid.Column>
         </Grid>
-
-        <Divider vertical>Or</Divider>
-      </Segment>
+        <div id='background-video'>
+          <video id="background-video_vid" loop autoPlay>
+            <source src={video} type="video/mp4" />
+            <source src={video} type="video/ogg" />
+          </video>
+        </div>
+      </Container>
     )
   }
 }

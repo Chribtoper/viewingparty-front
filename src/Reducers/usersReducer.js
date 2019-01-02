@@ -12,13 +12,12 @@ const defaultState = {
 const usersReducer = (state=defaultState, action) => {
   switch (action.type) {
     case 'SET_CURRENT_USER':
-      //action.payload { username: 'Chandler Bing', bio: 'user bio', avatar: 'a url' }
       return { ...state, user: action.payload, loggedIn: true, authenticatingUser: false }
-    case 'AUTHENTICATING_USER': // tells the app we're fetching
+    case 'AUTHENTICATING_USER':
       return { ...state, authenticatingUser: true }
     case 'AUTHENTICATED_USER':
       return { ...state, authenticatingUser: false }
-    case 'FAILED_LOGIN': // for error handling
+    case 'FAILED_LOGIN':
       return {
         ...state,
         failedLogin: true,

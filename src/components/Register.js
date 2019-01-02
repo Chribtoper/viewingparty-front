@@ -4,6 +4,7 @@ import { withRouter, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import { fetchRegister, loginUser } from '../actions/user.js'
 import { Header, Image, Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
+import video from './particle.mp4'
 
 class Register extends Component {
 
@@ -28,7 +29,7 @@ class Register extends Component {
     return this.props.registered ? (
       <Redirect to="/login"/>
     ) : (
-      <Segment placeholder>
+      <Segment style={{ height: window.innerHeight }} placeholder>
         <Header as='h1' textAlign='left'>
           <Image
             circular src={this.state.url} /> Register your own ViewingParty account!
@@ -53,7 +54,7 @@ class Register extends Component {
             <Form.Input
               icon='user'
               iconPosition='left'
-              label="username"
+              label="Username"
               placeholder="username"
               name="username"
               onChange={this.handleChange}
@@ -63,7 +64,7 @@ class Register extends Component {
               icon='lock'
               iconPosition='left'
               type="password"
-              label="password"
+              label="Password"
               placeholder="password"
               name="password"
               onChange={this.handleChange}
@@ -84,7 +85,7 @@ class Register extends Component {
                 size='small'
               />
                 <Form.TextArea
-                  label='bio'
+                  label='Bio'
                   placeholder='Tell us more about you...'
                   onChange={this.handleChange}
                   value={this.state.bio}

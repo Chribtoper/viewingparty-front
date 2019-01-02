@@ -1,13 +1,13 @@
 import React, { Component, Fragment } from 'react'
 import withAuth from '../hocs/withAuth'
 import { connect } from 'react-redux'
-import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect, Switch, NavLink, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
-import { Modal, Icon, Header, Label, Feed, TextArea, Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
+import { Menu, Sidebar, Modal, Icon, Header, Label, Feed, TextArea, Message, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
 import SendMessage from './SendMessage.js'
 import SendVideo from './SendVideo.js'
-import { deleteVideo } from '../actions/rooms.js'
+import { deleteVideo, patchVideo } from '../actions/rooms.js'
 
 class Room extends Component {
 
@@ -98,6 +98,7 @@ class Room extends Component {
                   const currentVideo = { url: this.regexUrl(data.body.youtube.video_url), id: data.body.youtube.id }
                   this.setState({currentVideo})
                   this.state.youtubePlayer.target.playVideo()
+                  patchVideo(currentRoomId,currentVideo.url)
                 }
                 break
               case 'User joined':
@@ -112,6 +113,7 @@ class Room extends Component {
                       messages: data.body.messages,
                       loaded: true
                     })
+                    if (data.body.videos.length>0) patchVideo(currentRoomId,this.regexUrl(data.body.videos[0].video_url))
                   } else {
                     this.setState({
                       users: data.body.users
@@ -133,12 +135,14 @@ class Room extends Component {
               case 'set_video':
                 this.setState({currentVideo: data.body})
                 this.state.youtubePlayer.target.playVideo()
+                patchVideo(currentRoomId,data.body.url)
                 break
               case 'receive_videos':
                 this.setState({videos: data.body})
                   if (this.state.videos.length>0) {
                     const currentVideo = { url: this.regexUrl(data.body[0].video_url), id: data.body[0].id }
                     this.setState({currentVideo})
+                    patchVideo(currentRoomId,currentVideo.url)
                     this.state.youtubePlayer.target.playVideo()
                   } else if (this.state.videos.length===0) {
                     this.handleOpen()
@@ -344,8 +348,8 @@ class Room extends Component {
       if (this.state.currentTime!==null || (this.props.usersReducer.user.id === this.state.users[0].id)) {
       // if (this.state.currentTime!==null && this.state.users) {
         const opts = {
-          height: '390',
-          width: '640',
+          height: window.innerHeight/2,
+          width: window.innerWidth/3,
           playerVars: {
             autoplay: 1
           }
@@ -445,68 +449,76 @@ class Room extends Component {
 
   render(){
     const opts = {
-      height: '390',
-      width: '640',
+      height: window.innerHeight/2,
+      width: window.innerWidth/3,
       playerVars: {
         autoplay: 1
       }
     }
     return (
-      <Grid>
-      <Modal
-        open={this.state.modalOpen}
-        onClose={this.handleClose}
-        basic
-        size='small'
-      >
-        <Header icon='play circle' content='Queue is empty' />
-          <Modal.Content>
-            <h3>The Queue is empty, paste a youtube video url below to get started!</h3>
-          </Modal.Content>
-        <Modal.Actions>
-          <Button color='green' onClick={this.handleClose} inverted>
-            <Icon name='checkmark' /> Got it
-          </Button>
-        </Modal.Actions>
-      </Modal>
-        <Grid.Row>
-          <Grid.Column width={8}>
-            <Segment padded='very' compact>
-              {this.state.loaded&&this.state.videos ? this.renderYoutube() : null}
-            </Segment>
-          </Grid.Column>
-          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='right' stretched width={4}>
-            <Segment padded='very' compact>
-              {this.renderMessages()}
-            </Segment>
-          </Grid.Column>
-          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='right' stretched width={4}>
-            <Segment padded='very' compact>
-              {this.renderUsers()}
-            </Segment>
-          </Grid.Column>
-        </Grid.Row>
+      <Sidebar.Pushable fluid style={{ background: '#201c2b', borderRadius: '10px' }} as={Segment}>
+        <Sidebar style={{ background: '#17111e', borderRadius: '10px' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
+          <Menu.Item style={{height: window.innerHeight/4 }}>
+            Top Button
+          </Menu.Item>
+          <Menu.Item icon='home' size='massive' style={{height: window.innerHeight/4 }} as={NavLink} to="/profile" name="Profile" active={this.props.location.pathname === '/profile'}>
+            <Image centered src='http://www.entypo.com/images/user.svg' style={{height: window.innerHeight/7 }} />
+          </Menu.Item>
+          <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/rooms" name="Rooms" active={this.props.location.pathname === '/rooms'}>
+            <Image centered src='http://www.entypo.com/images/home.svg' style={{height: window.innerHeight/7 }} />
+          </Menu.Item>
+          <Menu.Item style={{height: window.innerHeight/4 }} to="/logout" name="Logout" onClick={()=>this.props.logOut()}>
+            <Image centered src='http://www.entypo.com/images/log-out.svg' style={{height: window.innerHeight/7 }} />
+          </Menu.Item>
+        </Sidebar>
 
-        <Grid.Row>
-          <Grid.Column style={{overflow: 'auto', maxHeight: 480 }} floated='left' stretched width={8}>
-            <SendVideo
-              youtubeInput={this.state.youtubeInput}
-              youtubeInputUrl={this.youtubeInputUrl}
-              handleYoutubeFetch={this.handleYoutubeFetch}
-            />
-              <Image.Group style={{ whiteSpace: 'nowrap', height: 130, overflowY: 'hidden', overflowX: 'auto' }} size='small'>
-                {this.renderVideos()}
-              </Image.Group>
-          </Grid.Column>
-          <Grid.Column width={8}>
-            <SendMessage
-              message={this.state.message}
-              handleMessage={this.handleMessage}
-              messageInput={this.messageInput}
-            />
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+          <Sidebar.Pusher>
+            <Segment basic>
+                <Modal
+                  open={this.state.modalOpen}
+                  onClose={this.handleClose}
+                  basic
+                  size='small'
+                >
+                  <Header icon='play circle' content='Queue is empty' />
+                    <Modal.Content>
+                      <h3>The Queue is empty, paste a youtube video url below to get started!</h3>
+                    </Modal.Content>
+                  <Modal.Actions>
+                    <Button color='green' onClick={this.handleClose} inverted>
+                      <Icon name='checkmark' /> Got it
+                    </Button>
+                  </Modal.Actions>
+                </Modal>
+              <Grid celled='internally'>
+                <Grid.Column style={{overflow: 'auto', height: window.innerHeight, width: '40vw' }}>
+                  <Segment padded='very' compact>
+                    {this.state.loaded&&this.state.videos ? this.renderYoutube() : null}
+                  </Segment>
+
+                  <SendMessage
+                    message={this.state.message}
+                    handleMessage={this.handleMessage}
+                    messageInput={this.messageInput}
+                  />
+                  <SendVideo
+                    youtubeInput={this.state.youtubeInput}
+                    youtubeInputUrl={this.youtubeInputUrl}
+                    handleYoutubeFetch={this.handleYoutubeFetch}
+                  />
+                </Grid.Column>
+                <Grid.Column style={{overflow: 'auto', height: window.innerHeight, width: '40vw' }}>
+                  <Segment padded='very' compact>
+                    {this.renderMessages()}
+                  </Segment>
+                  <Segment padded='very' compact>
+                    {this.renderUsers()}
+                  </Segment>
+                </Grid.Column>
+              </Grid>
+            </Segment>
+          </Sidebar.Pusher>
+        </Sidebar.Pushable>
     )
   }
 }
