@@ -45,13 +45,14 @@ class Room extends Component {
     this.setState({currentRoomId})
     this.socketConnect(currentRoomId)
     .then(()=>{
+      this.findRoom(currentRoomId)
+      console.log(this.props)
         if (this.props.usersReducer.user.id === this.state.users[0].id) {
           if (this.state.videos.length>0) {
             this.setState({host: true, currentVideo: { url: this.regexUrl(this.state.videos[0].video_url), id: this.state.videos[0].id } })
           }
         }
     })
-    this.findRoom(currentRoomId)
   }
 
   componentWillUnmount() {
@@ -432,15 +433,22 @@ class Room extends Component {
       <Sidebar.Pushable style={{ background: '#201c2b', height: '100vh' }} as={Segment}>
         <Sidebar style={{ background: '#17111e', width: '15vw' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible>
           <Menu.Item style={{height: window.innerHeight/4 }}>
-            <Segment style={{background: '#17111e'}}>
-              <Image circular src={this.props.usersReducer.user.avatar ? this.props.usersReducer.user.avatar : null } size='medium' />
-            </Segment>
+              <Image centered size='small' circular src={this.props.usersReducer.user.avatar} />
+            <Header style={{marginTop: '1vh'}} size='huge' inverted as='h1'>
+              <p><Header.Content>{this.props.usersReducer.user.username}</Header.Content></p>
+            </Header>
           </Menu.Item>
-          <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/profile" name="Profile" active={this.props.location.pathname === '/profile'}>
-            <Image centered src='http://www.entypo.com/images/user.svg' style={{marginTop: '3vh', height: window.innerHeight/6.8 }} />
+          <Menu.Item style={{height: window.innerHeight/4 }}>
+            <Header inverted as='h1' icon textAlign='center'>
+              <Header.Content style={{marginTop: '3vh'}}>Current Room<p>{this.state.currentRoom ? this.state.currentRoom.name : null}</p></Header.Content>
+              <Image centered src='http://www.entypo.com/images/tv.svg' style={{ height: '10vh', width: '10vw' }} />
+            </Header>
           </Menu.Item>
-          <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/rooms" name="Rooms" active={this.props.location.pathname === '/rooms'}>
-            <Image centered src='http://www.entypo.com/images/home.svg' style={{marginTop: '3vh', height: window.innerHeight/6.8 }} />
+          <Menu.Item style={{height: window.innerHeight/4 }} href="/rooms" name="Rooms" active={this.props.location.pathname}>
+            <Header inverted as='h1' icon textAlign='center'>
+              <Header.Content style={{marginTop: '3vh'}}>Rooms</Header.Content>
+              <Image centered src='http://www.entypo.com/images/list.svg' style={{ height: '15vh', width: '15vw' }} />
+            </Header>
           </Menu.Item>
           <Menu.Item style={{height: window.innerHeight/4 }} to="/logout" name="Logout" onClick={()=>this.props.logOut()}>
             <Image centered src='http://www.entypo.com/images/log-out.svg' style={{marginTop: '3vh', height: window.innerHeight/6.8 }} />

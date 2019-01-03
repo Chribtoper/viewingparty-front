@@ -51,7 +51,7 @@ class RoomsList extends Component {
       const rooms = this.props.usersReducer.rooms
       return rooms.map(room => {
         return (
-          <Card raised href={`/rooms/${room.id}`} color='yellow'>
+          <Card key={room.id} raised href={`/rooms/${room.id}`} color='yellow'>
             <Image src={room.url}/>
             <Card.Content>
               <Card.Header>{room.name}</Card.Header>
@@ -73,8 +73,11 @@ class RoomsList extends Component {
             createNewRoom={this.createNewRoom}
             />
         </Menu.Item>
-        <Menu.Item icon='home' size='massive' style={{height: window.innerHeight/4 }} as={NavLink} to="/profile" name="Profile" active={this.props.location.pathname === '/profile'}>
-          <Image centered src='http://www.entypo.com/images/user.svg' style={{height: window.innerHeight/7 }} />
+        <Menu.Item icon='home' size='massive' style={{height: window.innerHeight/4 }} >
+            <Image centered size='small' circular src={this.props.usersReducer.user.avatar} />
+          <Header style={{marginTop: '1vh'}} size='huge' inverted as='h1'>
+            <p><Header.Content>Welcome... {this.props.usersReducer.user.username}</Header.Content></p>
+          </Header>
         </Menu.Item>
         <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/rooms" name="Rooms" active={this.props.location.pathname === '/rooms'}>
           <Image centered src='http://www.entypo.com/images/home.svg' style={{height: window.innerHeight/7 }} />
@@ -89,6 +92,9 @@ class RoomsList extends Component {
             { this.state.redirected ?
               <Redirect to={`/rooms/${this.state.roomId}`} render={window.location.reload()} />
                 :
+                  <Header style={{marginRight: '34vw'}} inverted as='h1' icon textAlign='center'>
+                    <Icon inverted name='users' circular />
+                  <Header.Content>Rooms</Header.Content>
                 <Grid celled='internally'>
                   <Grid.Column style={{overflow: 'auto', width: '65vw', maxHeight: window.innerHeight }}>
                     <Card.Group itemsPerRow={2}>
@@ -100,6 +106,7 @@ class RoomsList extends Component {
 
                   </Grid.Column>
                 </Grid>
+                </Header>
             }
           </Segment>
         </Sidebar.Pusher>

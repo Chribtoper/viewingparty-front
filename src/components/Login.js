@@ -4,7 +4,7 @@ import { withRouter, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import { loginUser, resetRegistered } from '../actions/user.js'
 import { fetchRooms } from '../actions/rooms.js'
-import { Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
+import { Header, Image, Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
 import video from './particle.mp4'
 
 class Login extends Component {
@@ -32,6 +32,7 @@ class Login extends Component {
       <Container style={{ flex: 1, resizeMode: 'cover', height: window.innerHeight, width: window.innerWidth }}>
         <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' relaxed='very' stackable>
           <Grid.Column style={{ maxWidth: 450 }}>
+          <Image centered src='http://bannerfans.com/img/20216570_64c58dce-tt1_0103/19_1546545373.png' style={{height: '20vh', width: '70vh',}} />
           <Segment style={{ background: '#6f5b8c' }} raised padded='very'>
           <Form
             onSubmit={this.handleSubmit}
