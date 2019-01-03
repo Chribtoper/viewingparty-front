@@ -89,7 +89,6 @@ class Room extends Component {
           console.log(data)
             switch (data.title) {
               case "New message":
-                // debugger
                 this.setState({messages: [...this.state.messages, data.body]})
                 break
               case 'new_youtube_vid':
@@ -123,11 +122,11 @@ class Room extends Component {
                 break
               case 'pause':
                 console.log(this.state)
-                this.state.youtubePlayer.target.pauseVideo()
+                if (this.state.youtubePlayer) this.state.youtubePlayer.target.pauseVideo()
                 break
               case 'play':
                 console.log(this.state)
-                this.state.youtubePlayer.target.playVideo()
+                if (this.state.youtubePlayer) this.state.youtubePlayer.target.playVideo()
                 break
               case 'current_time':
                 this.setState({currentTime: data.time, hostCurrentVideo: data.hostCurrentVideo})
@@ -260,9 +259,7 @@ class Room extends Component {
           return (
             <Message key={this.generateRandToken()}>
               <Message.Header><Image src={message.icon} avatar /><span>{message.userName}</span></Message.Header>
-              <p>
                 {message.body}
-              </p>
             </Message>
           )
       })
@@ -281,7 +278,10 @@ class Room extends Component {
         const code = this.regexUrl(video.video_url)
         const url = `https://img.youtube.com/vi/${code}/default.jpg`
           return (
-            <Image alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small' />
+            <>
+            <Image style={{ height: '25vh', width: '25vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
+            <Button onClick={()=>deleteVideo(this.state.currentRoomId, video.id)} style={{ height: '25vh', width: '3vw' }}negative><Icon fitted name='delete' size='big'/></Button>
+            </>
           )
       })
     }
@@ -304,7 +304,7 @@ class Room extends Component {
         this.setState({currentVideo: this.state.hostCurrentVideo})
       }
       if (this.state.youtubePlayer) {
-        if (Math.abs(this.state.youtubePlayer.target.getCurrentTime() - this.state.currentTime) > 3 && this.state.youtubePlayer) {
+        if (Math.abs(this.state.youtubePlayer.target.getCurrentTime() - this.state.currentTime) > 2 && this.state.youtubePlayer) {
           this.state.youtubePlayer.target.seekTo(this.state.currentTime, true)
         }
       }
@@ -316,27 +316,23 @@ class Room extends Component {
       return this.state.users.map(user => {
         if (user.id === this.state.users[0].id){
           return (
-            <Fragment key={this.generateRandToken()}>
-              <br/>
+            <Segment compact key={this.generateRandToken()}>
               <Label size='big' color='yellow' image>
                 <img src={user.avatar} />
                 {user.username}
                 <Label.Detail>host</Label.Detail>
               </Label>
-              <br/>
-            </Fragment>
+            </Segment>
           )
         } else {
           return (
-            <Fragment key={this.generateRandToken()}>
-              <br/>
+            <Segment compact key={this.generateRandToken()}>
               <Label size='big' color='blue' image>
                 <img src={user.avatar} />
                 {user.username}
                 <Label.Detail>user</Label.Detail>
               </Label>
-              <br/>
-            </Fragment>
+            </Segment>
           )
         }
       })
@@ -348,10 +344,11 @@ class Room extends Component {
       if (this.state.currentTime!==null || (this.props.usersReducer.user.id === this.state.users[0].id)) {
       // if (this.state.currentTime!==null && this.state.users) {
         const opts = {
-          height: window.innerHeight/2,
-          width: window.innerWidth/3,
+          height: window.innerHeight/1.7,
+          width: window.innerWidth/2.7,
           playerVars: {
-            autoplay: 1
+            autoplay: 1,
+            fs: 1,
           }
         }
         return (<YouTube
@@ -398,21 +395,10 @@ class Room extends Component {
 
   _onReady = (e) => {
     this.setState({youtubePlayer: e})
-    // this.setState({currentTime: this.state.currentTime})
-    // if (this.props.usersReducer.user.id === this.state.users[0].id) {
     if (this.props.usersReducer.user.id === this.state.users[0].id) {
-      // this.intervalOne = setInterval( () => {
-      //   this.state.roomSubscription.send({title: 'current_time', time: e.target.getCurrentTime()})
-      // }, 1000)
       this.hostLoop()
     } else {
-      // e.target.seekTo(this.state.currentTime, true)
       this.userLoop()
-      // this.intervalTwo = setInterval( () => {
-      //   if (Math.abs(e.target.getCurrentTime() - this.state.currentTime) > 3) {
-      //     e.target.seekTo(this.state.currentTime, true)
-      //   }
-      // }, 1000)
     }
   }
 
@@ -441,34 +427,23 @@ class Room extends Component {
     }
   }
 
-  _onStateChange = (e) => {
-    // if (e.target.getCurrentTime() !== this.state.currentTime[Object.keys(this.state.currentTime)[0]]) {
-    //   e.target.seekTo(this.state.currentTime[Object.keys(this.state.currentTime)[0]], true)
-    // } SPAGHETTI CODEEEEEEE
-  }
-
   render(){
-    const opts = {
-      height: window.innerHeight/2,
-      width: window.innerWidth/3,
-      playerVars: {
-        autoplay: 1
-      }
-    }
     return (
-      <Sidebar.Pushable fluid style={{ background: '#201c2b', borderRadius: '10px' }} as={Segment}>
-        <Sidebar style={{ background: '#17111e', borderRadius: '10px' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
+      <Sidebar.Pushable style={{ background: '#201c2b', height: '100vh' }} as={Segment}>
+        <Sidebar style={{ background: '#17111e', width: '15vw' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible>
           <Menu.Item style={{height: window.innerHeight/4 }}>
-            Top Button
+            <Segment style={{background: '#17111e'}}>
+              <Image circular src={this.props.usersReducer.user.avatar ? this.props.usersReducer.user.avatar : null } size='medium' />
+            </Segment>
           </Menu.Item>
-          <Menu.Item icon='home' size='massive' style={{height: window.innerHeight/4 }} as={NavLink} to="/profile" name="Profile" active={this.props.location.pathname === '/profile'}>
-            <Image centered src='http://www.entypo.com/images/user.svg' style={{height: window.innerHeight/7 }} />
+          <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/profile" name="Profile" active={this.props.location.pathname === '/profile'}>
+            <Image centered src='http://www.entypo.com/images/user.svg' style={{marginTop: '3vh', height: window.innerHeight/6.8 }} />
           </Menu.Item>
           <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/rooms" name="Rooms" active={this.props.location.pathname === '/rooms'}>
-            <Image centered src='http://www.entypo.com/images/home.svg' style={{height: window.innerHeight/7 }} />
+            <Image centered src='http://www.entypo.com/images/home.svg' style={{marginTop: '3vh', height: window.innerHeight/6.8 }} />
           </Menu.Item>
           <Menu.Item style={{height: window.innerHeight/4 }} to="/logout" name="Logout" onClick={()=>this.props.logOut()}>
-            <Image centered src='http://www.entypo.com/images/log-out.svg' style={{height: window.innerHeight/7 }} />
+            <Image centered src='http://www.entypo.com/images/log-out.svg' style={{marginTop: '3vh', height: window.innerHeight/6.8 }} />
           </Menu.Item>
         </Sidebar>
 
@@ -491,29 +466,31 @@ class Room extends Component {
                   </Modal.Actions>
                 </Modal>
               <Grid celled='internally'>
-                <Grid.Column style={{overflow: 'auto', height: window.innerHeight, width: '40vw' }}>
-                  <Segment padded='very' compact>
+                <Grid.Column style={{ textAlign: 'left', background: '#201c2b', height: '70vh', width: '40vw' }}>
                     {this.state.loaded&&this.state.videos ? this.renderYoutube() : null}
-                  </Segment>
-
-                  <SendMessage
-                    message={this.state.message}
-                    handleMessage={this.handleMessage}
-                    messageInput={this.messageInput}
-                  />
                   <SendVideo
                     youtubeInput={this.state.youtubeInput}
                     youtubeInputUrl={this.youtubeInputUrl}
                     handleYoutubeFetch={this.handleYoutubeFetch}
                   />
                 </Grid.Column>
-                <Grid.Column style={{overflow: 'auto', height: window.innerHeight, width: '40vw' }}>
-                  <Segment padded='very' compact>
+                <Grid.Column style={{ textAlign:'left', background: '#201c2b', height: '70vh', width: '25vw' }}>
+                  <Segment style={{ background: '#19171c', whiteSpace: 'wrap',   wordWrap: 'break-word', height: '58vh', overflowY: 'auto', overflowX: 'hidden' }} padded='very'>
                     {this.renderMessages()}
                   </Segment>
-                  <Segment padded='very' compact>
+                  <SendMessage
+                    message={this.state.message}
+                    handleMessage={this.handleMessage}
+                    messageInput={this.messageInput}
+                  />
+                </Grid.Column>
+                <Grid.Column stretched style={{ textAlign:'center', background: '#201c2b', height: '70vh', width: '20vw' }}>
                     {this.renderUsers()}
-                  </Segment>
+                </Grid.Column>
+                <Grid.Column style={{ borderRadius: '2vh', textAlign:'left', boxShadow: '0px -2px 2px rgba(34,34,34,0.6)', background: '#19171c', height: '30vh', width: '90vw' }}>
+                  <Image.Group style={{ whiteSpace: 'nowrap', overflowY: 'hidden', overflowX: 'auto' }} >
+                    {this.renderVideos()}
+                  </Image.Group>
                 </Grid.Column>
               </Grid>
             </Segment>
@@ -527,4 +504,10 @@ const mapStateToProps = (reduxStoreState) => {
   return reduxStoreState
 }
 
-export default withAuth(connect(mapStateToProps)(withRouter(Room)))
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logOut: () => dispatch({ type: 'LOG_OUT' }, localStorage.clear())
+  }
+}
+
+export default withAuth(connect(mapStateToProps, mapDispatchToProps)(withRouter(Room)))

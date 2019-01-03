@@ -51,15 +51,11 @@ class RoomsList extends Component {
       const rooms = this.props.usersReducer.rooms
       return rooms.map(room => {
         return (
-          <Card
-            raised
-            header={room.name}
-            size="large"
-            key={room.id}
-            color='blue'
-            href={`/rooms/${room.id}`}
-            image={room.url}
-          >
+          <Card raised href={`/rooms/${room.id}`} color='yellow'>
+            <Image src={room.url}/>
+            <Card.Content>
+              <Card.Header>{room.name}</Card.Header>
+            </Card.Content>
           </Card>
         )
       })
@@ -68,8 +64,8 @@ class RoomsList extends Component {
 
   render() {
     return (
-    <Sidebar.Pushable fluid style={{ background: '#201c2b', borderRadius: '10px' }} as={Segment}>
-      <Sidebar style={{ background: '#17111e', borderRadius: '10px' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
+    <Sidebar.Pushable fluid style={{ background: '#201c2b', height: '100vh' }} as={Segment}>
+      <Sidebar style={{ background: '#17111e', width: '25vw' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
         <Menu.Item style={{height: window.innerHeight/4 }}>
           <CreateRoom
             roomName={this.state.roomName}
@@ -94,7 +90,7 @@ class RoomsList extends Component {
               <Redirect to={`/rooms/${this.state.roomId}`} render={window.location.reload()} />
                 :
                 <Grid celled='internally'>
-                  <Grid.Column style={{overflow: 'auto', maxHeight: window.innerHeight }} width={11}>
+                  <Grid.Column style={{overflow: 'auto', width: '65vw', maxHeight: window.innerHeight }}>
                     <Card.Group itemsPerRow={2}>
                       {this.renderRooms()}
                     </Card.Group>

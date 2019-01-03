@@ -85,4 +85,9 @@
   #background-video_vid {
     display: none;
   }
+
+  .room-message {
+    white-space: wrap;
+    word-wrap: break-word;
+  }
 }
