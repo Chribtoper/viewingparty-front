@@ -277,7 +277,8 @@ class Room extends Component {
     if (this.state.videos) {
       return this.state.videos.map(video => {
         const code = this.regexUrl(video.video_url)
-        const url = `https://img.youtube.com/vi/${code}/default.jpg`
+        const url = `https://img.youtube.com/vi/${code}/maxres
+        default.jpg`
           return (
             <>
             <Image style={{ height: '25vh', width: '25vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
@@ -368,31 +369,6 @@ class Room extends Component {
         }, 1000)
       }
   }
-
-
-  // leaveRoom() {
-  //   // fetch(ROOMS)
-  //   // .then(r=>r.json())
-  //   // .then(rooms=>this.setState({rooms})) REFACTOR THIS SO IT DOESNT LOOP THROUGH FETCHES
-  //   clearInterval()
-  //   return (
-  //     <div>
-  //       <Button negative
-  //         onClick={() => {
-  //           this.cable.subscriptions.remove(this.state.roomSubscription);
-  //           this.setState(
-  //             { currentRoomId: null, roomSubscription: null, messages: []},
-  //             () => {
-  //               console.log("Succesfully cleared subscription")
-  //             }
-  //           )
-  //         }}
-  //         >
-  //           LeaveRoom
-  //       </Button>
-  //     </div>
-  //   )
-  // }
 
   _onReady = (e) => {
     this.setState({youtubePlayer: e})
