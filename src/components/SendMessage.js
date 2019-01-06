@@ -1,14 +1,20 @@
 import React from 'react';
+import { Label, Input, Button, Form } from 'semantic-ui-react'
 
 const SendMessage = (props) => {
   return (
-    <form onSubmit={(e)=>props.handleMessage(e)}>
-        <label>
-          Send Message:
-          <input type="text" value={props.message} onChange={(e)=>props.messageInput(e)} />
-        </label>
-      <input type="submit" value="Submit" />
-    </form>
+    <Form onSubmit={(e)=>props.handleMessage(e)}>
+    <Label color='white'>Send Message</Label>
+      <Form.Input
+        action='Send'
+        icon='conversation'
+        iconPosition='left'
+        placeholder='Type a message here...'
+        name='message'
+        onChange={(e)=>props.messageInput(e)}
+        value={props.message}
+      />
+    </Form>
   )
 }
 

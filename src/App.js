@@ -1,23 +1,27 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import logo from './logo.svg';
+import React, { Fragment } from 'react';
+// import logo from './logo.svg';
 import './App.css';
-import ActionCable from 'actioncable';
-import NavBar from './components/NavBar.js'
-import Home from './containers/Home.js'
+import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
+import Profile from './components/Profile'
+import Login from './components/Login'
+import ActionCable from 'actioncable'
+import RoomsPage from './components/RoomsPage.js'
+import NotFound from './components/notFound.js'
+import Register from './components/Register'
 
-class App extends Component {
-
-  render() {
-    return (
-      <Router>
-        <div>
-          <NavBar />
-          <Route exact path="/" render={() => <Home />} />
-        </div>
-      </Router>
-    );
-  }
+const App = (props) => {
+  return (
+    <Fragment>
+          <Switch>
+            <Route exact path="/" render={() => <Redirect to="/rooms" />} />
+            <Route exact path="/profile" component={Profile} />
+            <Route path="/rooms" render={routerProps => <RoomsPage {...routerProps} />} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <Route component={NotFound} />
+          </Switch>
+    </Fragment>
+  )
 }
 
-export default App;
+export default withRouter(App);
