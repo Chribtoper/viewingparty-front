@@ -2,12 +2,12 @@ import React, { Fragment } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
-import Profile from './components/Profile'
-import Login from './components/Login'
+import Profile from './components/Profile.js'
+import Login from './components/Login.js'
 import ActionCable from 'actioncable'
 import RoomsPage from './components/RoomsPage.js'
 import NotFound from './components/NotFound.js'
-import Register from './components/Register'
+import Register from './components/Register.js'
 
 const App = (props) => {
   return (
