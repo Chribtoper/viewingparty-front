@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
-import { loginUser, resetRegistered } from '../actions/user.js'
+import { loginUser, resetRegistered } from '../actions/user'
 import { fetchRooms } from '../actions/rooms.js'
 import { Header, Image, Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
 import video from './particle.mp4'
