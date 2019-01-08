@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import { loginUser, resetRegistered } from '../actions/User.js'
-import { fetchRooms } from '../actions/rooms.js'
+import { fetchRooms } from '../actions/Rooms.js'
 import { Header, Image, Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
 import video from './particle.mp4'
 
