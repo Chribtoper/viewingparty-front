@@ -6,7 +6,7 @@ import Profile from './components/Profile'
 import Login from './components/Login'
 import ActionCable from 'actioncable'
 import RoomsPage from './components/RoomsPage.js'
-import NotFound from './components/notFound.js'
+import NotFound from './components/NotFound.js'
 import Register from './components/Register'
 
 const App = (props) => {
