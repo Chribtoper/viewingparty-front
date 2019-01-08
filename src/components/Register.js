@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
-import { fetchRegister, loginUser } from '../actions/user.js'
+import { fetchRegister, loginUser } from '../actions/User.js'
 import { Header, Image, Container, Grid, Divider, Button, Form, Segment, Message } from 'semantic-ui-react'
 import video from './particle.mp4'
 

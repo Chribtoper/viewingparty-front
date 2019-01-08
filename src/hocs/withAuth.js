@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
-import { fetchCurrentUser } from '../actions/user'
-import { fetchRooms } from '../actions/rooms.js'
+import { fetchCurrentUser } from '../actions/User.js'
+import { fetchRooms } from '../actions/Rooms.js'
 
 import { Loader, Image } from 'semantic-ui-react'
 

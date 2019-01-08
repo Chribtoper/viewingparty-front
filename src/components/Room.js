@@ -7,7 +7,7 @@ import { Menu, Sidebar, Modal, Icon, Header, Label, Feed, TextArea, Message, But
 import YouTube from 'react-youtube'
 import SendMessage from './SendMessage.js'
 import SendVideo from './SendVideo.js'
-import { deleteVideo, patchVideo } from '../actions/rooms.js'
+import { deleteVideo, patchVideo } from '../actions/Rooms.js'
 
 class Room extends Component {
 

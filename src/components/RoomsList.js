@@ -3,7 +3,7 @@ import Room from './Room.js';
 import { Item, Header, Sidebar, Menu, Icon, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import CreateRoom from './CreateRoom.js'
 import withAuth from '../hocs/withAuth'
-import { fetchRooms } from '../actions/rooms.js'
+import { fetchRooms } from '../actions/Rooms.js'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, NavLink, Redirect, Link, Switch, withRouter } from 'react-router-dom'
 

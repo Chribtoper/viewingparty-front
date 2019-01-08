@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
 import Room from './Room.js'
-import { fetchRooms } from '../actions/rooms.js'
+import { fetchRooms } from '../actions/Rooms.js'
 import RoomsList from './RoomsList.js'
 import Nav from './Nav.js'
 
