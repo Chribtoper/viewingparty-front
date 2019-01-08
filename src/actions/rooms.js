@@ -16,7 +16,7 @@ export const /*FUNCTION*/ fetchRooms = () => {
                })
     })
   }
-}
+} 
 
 export const deleteVideo = (roomId, videoId) => {
     return new Promise ((resolve, reject) => {
