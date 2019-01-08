@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import WithAuth from '../hocs/WithAuth'
+import WithAuth from '../hocs/WithAuth.js'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Switch, NavLink, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
