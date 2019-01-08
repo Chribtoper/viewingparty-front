@@ -9,7 +9,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'semantic-ui-css/semantic.min.css'
-import UsersReducer from './reducers/UsersReducer'
+import UsersReducer from './reducers/UsersReducer.js'
 
 
 const rootReducer = combineReducers({ UsersReducer: UsersReducer })
