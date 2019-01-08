@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import SendMessage from './SendMessage.js'
 import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom'
-import withAuth from '../hocs/withAuth'
+import WithAuth from '../hocs/WithAuth'
 import { connect } from 'react-redux'
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
@@ -34,4 +34,4 @@ const mapStateToProps = (props) => {
   return props
 }
 
-export default withAuth(connect(mapStateToProps, { fetchRooms })(withRouter(RoomsPage)))
+export default WithAuth(connect(mapStateToProps, { fetchRooms })(withRouter(RoomsPage)))

@@ -6,7 +6,7 @@ import { fetchRooms } from '../actions/Rooms.js'
 
 import { Loader, Image } from 'semantic-ui-react'
 
-const withAuth = (WrappedComponent) => {
+const WithAuth = (WrappedComponent) => {
   class AuthorizedComponent extends Component {
 
     componentDidMount() {
@@ -34,8 +34,8 @@ const withAuth = (WrappedComponent) => {
 
   const mapStateToProps = (reduxStoreState) => {
     return {
-      loggedIn: reduxStoreState.usersReducer.loggedIn,
-      authenticatingUser: reduxStoreState.usersReducer.authenticatingUser
+      loggedIn: reduxStoreState.UsersReducer.loggedIn,
+      authenticatingUser: reduxStoreState.UsersReducer.authenticatingUser
     }
   }
 
@@ -48,4 +48,4 @@ const withAuth = (WrappedComponent) => {
   return connect(mapStateToProps, { fetchCurrentUser, fetchRooms })(AuthorizedComponent)
 }
 
-export default withAuth
+export default WithAuth

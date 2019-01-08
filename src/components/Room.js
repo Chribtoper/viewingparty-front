@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import withAuth from '../hocs/withAuth'
+import WithAuth from '../hocs/WithAuth'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, Redirect, Switch, NavLink, withRouter } from 'react-router-dom'
 import ActionCable from 'actioncable';
@@ -47,7 +47,7 @@ class Room extends Component {
     .then(()=>{
       this.findRoom(currentRoomId)
       console.log(this.props)
-        if (this.props.usersReducer.user.id === this.state.users[0].id) {
+        if (this.props.UsersReducer.user.id === this.state.users[0].id) {
           if (this.state.videos.length>0) {
             this.setState({host: true, currentVideo: { url: this.regexUrl(this.state.videos[0].video_url), id: this.state.videos[0].id } })
           }
@@ -84,7 +84,7 @@ class Room extends Component {
         {
           channel: "RoomsChannel",
           room_id: currentRoomId,
-          user_id: this.props.usersReducer.user.id
+          user_id: this.props.UsersReducer.user.id
         },
         { received: data => {
           console.log(data)
@@ -152,7 +152,7 @@ class Room extends Component {
               this.setState({
                 users: data.body
               })
-                    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+                    if (this.props.UsersReducer.user.id === this.state.users[0].id) {
                       clearInterval(this.intervalTwo)
                       this.hostLoop()
                     }
@@ -171,9 +171,9 @@ class Room extends Component {
     console.log(this.state.message)
     const roomId = this.state.currentRoomId
     const message = this.state.message
-    const userId = this.props.usersReducer.user.id
-    const username = this.props.usersReducer.user.username
-    const avatar = this.props.usersReducer.user.avatar
+    const userId = this.props.UsersReducer.user.id
+    const username = this.props.UsersReducer.user.username
+    const avatar = this.props.UsersReducer.user.avatar
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}/messages`, {
       method: "POST",
       headers: {
@@ -202,7 +202,7 @@ class Room extends Component {
 
   handleYoutubeFetch = (e) => {
     const roomId = this.state.currentRoomId
-    const userId = this.props.usersReducer.user.id
+    const userId = this.props.UsersReducer.user.id
     const videoUrl = this.state.youtubeInput
     e.preventDefault()
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${roomId}/youtubes`, {
@@ -248,7 +248,7 @@ class Room extends Component {
   }
 
   setCurrentVid = (e) => {
-    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+    if (this.props.UsersReducer.user.id === this.state.users[0].id) {
       const currentVideo = { url: e.target.name, id: e.target.alt }
       this.state.roomSubscription.send({title: 'set_video', body: currentVideo})
     }
@@ -343,7 +343,7 @@ class Room extends Component {
 
   renderYoutube = () => {
 
-      if (this.state.currentTime!==null || (this.props.usersReducer.user.id === this.state.users[0].id)) {
+      if (this.state.currentTime!==null || (this.props.UsersReducer.user.id === this.state.users[0].id)) {
       // if (this.state.currentTime!==null && this.state.users) {
         const opts = {
           height: window.innerHeight/1.7,
@@ -372,7 +372,7 @@ class Room extends Component {
 
   _onReady = (e) => {
     this.setState({youtubePlayer: e})
-    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+    if (this.props.UsersReducer.user.id === this.state.users[0].id) {
       this.hostLoop()
     } else {
       this.userLoop()
@@ -380,7 +380,7 @@ class Room extends Component {
   }
 
   _onEnd = (e) => {
-    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+    if (this.props.UsersReducer.user.id === this.state.users[0].id) {
       deleteVideo(this.state.currentRoomId,this.state.currentVideo.id)
     }
   }
@@ -393,13 +393,13 @@ class Room extends Component {
 
   _onPause = (e) => {
     console.log(this.state.roomSubscription)
-    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+    if (this.props.UsersReducer.user.id === this.state.users[0].id) {
       this.state.roomSubscription.send({title: 'pause'})
     }
   }
 
   _onPlay = (e) => {
-    if (this.props.usersReducer.user.id === this.state.users[0].id) {
+    if (this.props.UsersReducer.user.id === this.state.users[0].id) {
       this.state.roomSubscription.send({title: 'play'})
     }
   }
@@ -409,9 +409,9 @@ class Room extends Component {
       <Sidebar.Pushable style={{ background: '#201c2b', height: '100vh' }} as={Segment}>
         <Sidebar style={{ background: '#17111e', width: '15vw' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible>
           <Menu.Item style={{height: window.innerHeight/4 }}>
-              <Image centered size='small' circular src={this.props.usersReducer.user.avatar} />
+              <Image centered size='small' circular src={this.props.UsersReducer.user.avatar} />
             <Header style={{marginTop: '1vh'}} size='huge' inverted as='h1'>
-              <p><Header.Content>{this.props.usersReducer.user.username}</Header.Content></p>
+              <p><Header.Content>{this.props.UsersReducer.user.username}</Header.Content></p>
             </Header>
           </Menu.Item>
           <Menu.Item style={{height: window.innerHeight/4 }}>
@@ -494,4 +494,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default withAuth(connect(mapStateToProps, mapDispatchToProps)(withRouter(Room)))
+export default WithAuth(connect(mapStateToProps, mapDispatchToProps)(withRouter(Room)))

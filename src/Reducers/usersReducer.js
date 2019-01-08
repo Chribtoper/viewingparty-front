@@ -9,7 +9,7 @@ const defaultState = {
   rooms: []
 }
 
-const usersReducer = (state=defaultState, action) => {
+const UsersReducer = (state=defaultState, action) => {
   switch (action.type) {
     case 'SET_CURRENT_USER':
       return { ...state, user: action.payload, loggedIn: true, authenticatingUser: false }
@@ -64,4 +64,4 @@ const usersReducer = (state=defaultState, action) => {
   }
 }
 
-export default usersReducer
+export default UsersReducer

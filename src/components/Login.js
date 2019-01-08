@@ -80,7 +80,7 @@ class Login extends Component {
 }
 
 // Destructuring the state of the reduxStoreState to avoid all the dots
-const mapStateToProps = ({ usersReducer: { authenticatingUser, failedLogin, error, loggedIn } }) => ({
+const mapStateToProps = ({ UsersReducer: { authenticatingUser, failedLogin, error, loggedIn } }) => ({
   authenticatingUser,
   failedLogin,
   error,

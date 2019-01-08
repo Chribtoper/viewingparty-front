@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Card, Image } from 'semantic-ui-react'
-import withAuth from '../hocs/withAuth'
+import WithAuth from '../hocs/WithAuth'
 
 const Profile = ({ avatar, username, bio }) => (
   <Card>
@@ -13,10 +13,10 @@ const Profile = ({ avatar, username, bio }) => (
   </Card>
 )
 
-const mapStateToProps = ({ usersReducer: { user: { avatar, username, bio } } }) => ({
+const mapStateToProps = ({ UsersReducer: { user: { avatar, username, bio } } }) => ({
   avatar,
   username,
   bio
 })
 
-export default withAuth(connect(mapStateToProps)(Profile))
+export default WithAuth(connect(mapStateToProps)(Profile))

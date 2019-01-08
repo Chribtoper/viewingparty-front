@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import Room from './Room.js';
 import { Item, Header, Sidebar, Menu, Icon, Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import CreateRoom from './CreateRoom.js'
-import withAuth from '../hocs/withAuth'
+import WithAuth from '../hocs/WithAuth'
 import { fetchRooms } from '../actions/Rooms.js'
 import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route, NavLink, Redirect, Link, Switch, withRouter } from 'react-router-dom'
@@ -33,10 +33,10 @@ class RoomsList extends Component {
       })
     })
     .then(r=>{
-      console.log(this.props.usersReducer.rooms)
+      console.log(this.props.UsersReducer.rooms)
       this.props.fetchRooms()
       .then(()=>{
-        const rooms = this.props.usersReducer.rooms
+        const rooms = this.props.UsersReducer.rooms
         const roomId = rooms[Object.keys(rooms)[Object.keys(rooms).length - 1]].id
         this.setState({
           redirected: true,
@@ -47,8 +47,8 @@ class RoomsList extends Component {
   }
 
   renderRooms = () => {
-    if (this.props.usersReducer.rooms) {
-      const rooms = this.props.usersReducer.rooms
+    if (this.props.UsersReducer.rooms) {
+      const rooms = this.props.UsersReducer.rooms
       return rooms.map(room => {
         return (
           <Card key={room.id} raised href={`/rooms/${room.id}`} color='yellow'>
@@ -74,9 +74,9 @@ class RoomsList extends Component {
             />
         </Menu.Item>
         <Menu.Item icon='home' size='massive' style={{height: window.innerHeight/4 }} >
-            <Image centered size='small' circular src={this.props.usersReducer.user.avatar} />
+            <Image centered size='small' circular src={this.props.UsersReducer.user.avatar} />
           <Header style={{marginTop: '1vh'}} size='huge' inverted as='h1'>
-            <p><Header.Content>Welcome... {this.props.usersReducer.user.username}</Header.Content></p>
+            <p><Header.Content>Welcome... {this.props.UsersReducer.user.username}</Header.Content></p>
           </Header>
         </Menu.Item>
         <Menu.Item style={{height: window.innerHeight/4 }} as={NavLink} to="/rooms" name="Rooms" active={this.props.location.pathname === '/rooms'}>
@@ -126,4 +126,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default withAuth(connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomsList)))
+export default WithAuth(connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomsList)))

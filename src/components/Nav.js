@@ -40,7 +40,7 @@ const Nav = (props) => {
   )
 }
 
-const mapStateToProps = ({ usersReducer: user }) => ({ user })
+const mapStateToProps = ({ UsersReducer: user }) => ({ user })
 
 const mapDispatchToProps = dispatch => {
   return {
