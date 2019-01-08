@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import SendMessage from './SendMessage.js'
 import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom'
-import WithAuth from '../hocs/WithAuth'
+import WithAuth from '../hocs/WithAuth.js'
 import { connect } from 'react-redux'
 import { Button, Container, Card, Input, Grid, Image, Segment, Divider } from 'semantic-ui-react'
 import YouTube from 'react-youtube'
