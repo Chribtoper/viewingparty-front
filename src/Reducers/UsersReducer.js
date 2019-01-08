@@ -7,7 +7,7 @@ const defaultState = {
   registered: false,
   error: null,
   rooms: []
-} 
+}
 
 const UsersReducer = (state=defaultState, action) => {
   switch (action.type) {
