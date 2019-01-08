@@ -79,7 +79,7 @@ class Room extends Component {
 
   socketConnect = (currentRoomId) => {
     return new Promise ((resolve, reject) => {
-      this.cable = ActionCable.createConsumer("wss://viewingparty-app.herokuapp.com/api/v1/cable");
+      this.cable = ActionCable.createConsumer("wss://viewingparty-app.herokuapp.com/cable");
       const roomSubscription = this.cable.subscriptions.create(
         {
           channel: "RoomsChannel",
