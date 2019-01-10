@@ -47,7 +47,7 @@ class Room extends Component {
     .then(()=>{
       this.findRoom(currentRoomId)
       console.log(this.props)
-      this.scrollToBottom(this.state.messages[this.state.messages.length-1])
+      this.scrollToBottom()
         if (this.props.UsersReducer.user.id === this.state.users[0].id) {
           if (this.state.videos.length>0) {
             this.setState({host: true, currentVideo: { url: this.regexUrl(this.state.videos[0].video_url), id: this.state.videos[0].id } })
@@ -63,8 +63,7 @@ class Room extends Component {
     console.log("Succesfully cleared subscription")
   }
 
-  scrollToBottom = (lastMessage) => {
-    debugger
+  scrollToBottom = () => {
     this.lastMessage.scrollIntoView({ behavior: "smooth" });
   }
 
@@ -265,7 +264,10 @@ class Room extends Component {
     if (this.state.messages) {
       return this.state.messages.map(message => {
           return (
-            <Message key={this.generateRandToken()}>
+            <Message
+              key={this.generateRandToken()}
+              ref={(el) => { this.lastMessage = el }}
+            >
               <Message.Header><Image src={message.icon} avatar /><span>{message.userName}</span></Message.Header>
                 {message.body}
             </Message>
