@@ -1,6 +1,5 @@
-export const /*FUNCTION*/ fetchRooms = () => {
-  return /*FUNCTION*/ (dispatch) => { //thunk
-    // console.log(process.env.REACT_APP_API_ENDPOINT)
+export const fetchRooms = () => {
+  return (dispatch) => {
     return new Promise ((resolve, reject) => {
       fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms`, {
              method: "GET",

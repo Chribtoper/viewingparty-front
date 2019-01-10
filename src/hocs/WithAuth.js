@@ -10,16 +10,14 @@ const WithAuth = (WrappedComponent) => {
   class AuthorizedComponent extends Component {
 
     componentDidMount() {
-      console.log('%c INSIDE COMPONENT DID MOUNT FOR AUTH HOC', 'color: purple')
       if (localStorage.getItem('jwt') && !this.props.loggedIn) {
         this.props.fetchCurrentUser();
       } else if (localStorage.getItem('jwt') && this.props.loggedIn) {
         this.props.fetchRooms();
       }
-    } 
+    }
 
     render() {
-      console.log('%c INSIDE RENDER FOR HOC', 'color: green')
       if (localStorage.getItem('jwt') && this.props.loggedIn) {
         return <WrappedComponent />
       } else if (localStorage.getItem('jwt') && (this.props.authenticatingUser || !this.props.loggedIn)) {

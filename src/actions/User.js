@@ -1,15 +1,10 @@
 import { withRouter, Redirect } from 'react-router'
 import React from 'react'
 
-export const /*FUNCTION*/ loginUser = (username, password) => {
-  return /*FUNCTION*/ (dispatch) => { //thunk
-    // console.log(process.env.REACT_APP_API_ENDPOINT)
+export const loginUser = (username, password) => {
+  return (dispatch) => {
     dispatch({ type: 'AUTHENTICATING_USER' })
-    // dispatch(authenticatingUser())
-    // fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/login`)
-    // adapter.loginUser(username, password)
-    // http://localhost:3000
-    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/login`, { //TODO: move this to an adapter
+    fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,28 +24,18 @@ export const /*FUNCTION*/ loginUser = (username, password) => {
           throw response
         }
       })
-      /* { user:
-        { username: 'chandler bing', bio: '', avatar: ''},
-        jwt: 'aaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccc'
-      } */
       .then(JSONResponse => {
-        console.log('%c INSIDE YE OLDE .THEN', 'color: navy')
         localStorage.setItem('jwt', JSONResponse.jwt)
         dispatch({ type: 'SET_CURRENT_USER', payload: JSONResponse.user });
         // dispatch(setCurrentUser(JSONResponse.user))
       })
       .catch(r => r.json().then(e => dispatch({ type: 'FAILED_LOGIN', payload: e.message })))
-      // .then((jsonResponse) => {
-      //   localStorage.setItem('jwt', jsonResponse.jwt)
-      //   dispatch(setCurrentUser(jsonResponse.user))
-      // })
   }
 }
 
 export const fetchCurrentUser = () => {
-  // takes the token in localStorage and finds out who it belongs to
   return (dispatch) => {
-    dispatch(authenticatingUser()) //tells the app we are fetching
+    dispatch(authenticatingUser())
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/profile`, {
       method: 'GET',
       headers: {
@@ -64,8 +49,7 @@ export const fetchCurrentUser = () => {
 
 export const fetchRegister = (username, password, bio, avatar) => {
   return (dispatch) => {
-    dispatch(authenticatingUser()) //tells the app we are fetching
-    console.log("about to register")
+    dispatch(authenticatingUser())
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/users`, { //TODO: move this to an adapter
       method: 'POST',
       headers: {
@@ -82,7 +66,6 @@ export const fetchRegister = (username, password, bio, avatar) => {
       })
     })
       .then(response => {
-        console.log(response)
         if (response.ok) {
           dispatch({ type: 'REGISTERED' })
           return response.json()
@@ -111,8 +94,4 @@ export const failedLogin = (errorMsg) => ({
   payload: errorMsg
 })
 
-// tell our app we're currently fetching
 export const authenticatingUser = () => ({ type: 'AUTHENTICATING_USER' })
-// export const authenticatingUser = () => {
-//   return { type: 'AUTHENTICATING_USER' }
-// }
