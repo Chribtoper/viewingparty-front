@@ -13,7 +13,6 @@ class App extends Component {
 
   render(){
     document.title = 'Viewing Party'
-    document.body = 'Watch youtube videos in sync with your friends!'
     return (
       <Fragment>
             <Switch>
