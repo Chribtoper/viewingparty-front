@@ -280,8 +280,8 @@ class Room extends Component {
         const url = `https://img.youtube.com/vi/${code}/hqdefault.jpg`
           return (
             <>
-            <Image style={{ height: '20vh', width: '20vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
-            <Button onClick={()=>deleteVideo(this.state.currentRoomId, video.id)} style={{ height: '20vh', width: '3vw' }}negative><Icon fitted name='delete' size='big'/></Button>
+            <Image style={{ height: '22vh', width: '22vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
+            <Button onClick={()=>deleteVideo(this.state.currentRoomId, video.id)} style={{ height: '22vh', width: '3vw' }}negative><Icon fitted name='delete' size='big'/></Button>
             </>
           )
       })
