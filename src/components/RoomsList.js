@@ -88,7 +88,7 @@ class RoomsList extends Component {
       </Sidebar>
 
         <Sidebar.Pusher>
-          <Segment style={{height: '100vh'}} basic>
+          <Segment style={{height: '90vh'}} basic>
             { this.state.redirected ?
               <Redirect to={`/rooms/${this.state.roomId}`} render={window.location.reload()} />
                 :
