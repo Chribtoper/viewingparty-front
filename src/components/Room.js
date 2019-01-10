@@ -64,8 +64,7 @@ class Room extends Component {
   }
 
   scrollToBottom = () => {
-    debugger
-    this.lastMessage.scrollIntoView({ behavior: "smooth" });
+    document.getElementById('messages').children[document.getElementById('messages').children.length-1].scrollIntoView({ behavior: "smooth" });
   }
 
   findRoom = (currentRoomId) => {
@@ -97,6 +96,7 @@ class Room extends Component {
             switch (data.title) {
               case "New message":
                 this.setState({messages: [...this.state.messages, data.body]})
+                this.scrollToBottom()
                 break
               case 'new_youtube_vid':
                 this.setState({videos: [...this.state.videos, data.body.youtube]})
