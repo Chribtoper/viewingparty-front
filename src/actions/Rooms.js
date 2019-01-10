@@ -43,7 +43,7 @@ export const patchVideo = (roomId, url) => {
                "Content-Type": "application/json"
              },
              body: JSON.stringify({
-               url: `https://img.youtube.com/vi/${url}/hqdefault`
+               url: `https://img.youtube.com/vi/${url}/hqdefault.jpg`
              })
                })
               .then(()=>{
