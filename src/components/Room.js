@@ -431,7 +431,7 @@ class Room extends Component {
         </Sidebar>
 
           <Sidebar.Pusher>
-            <Segment basic>
+            <Segment style={{height: '80vh'}} basic>
                 <Modal
                   open={this.state.modalOpen}
                   onClose={this.handleClose}
@@ -448,7 +448,7 @@ class Room extends Component {
                     </Button>
                   </Modal.Actions>
                 </Modal>
-              <Grid celled='internally'>
+              <Grid style={{height: '100vh'}} celled='internally'>
                 <Grid.Column style={{ textAlign: 'left', background: '#201c2b', height: '70vh', width: '40vw' }}>
                     {this.state.loaded&&this.state.videos ? this.renderYoutube() : null}
                   <SendVideo
@@ -470,7 +470,7 @@ class Room extends Component {
                 <Grid.Column stretched style={{ textAlign:'center', background: '#201c2b', height: '70vh', width: '20vw' }}>
                     {this.renderUsers()}
                 </Grid.Column>
-                <Grid.Column style={{ borderRadius: '2vh', textAlign:'left', boxShadow: '0px -2px 2px rgba(34,34,34,0.6)', background: '#19171c', height: '30vh', width: '90vw' }}>
+                <Grid.Column style={{ borderRadius: '2vh', textAlign:'left', boxShadow: '0px -2px 2px rgba(34,34,34,0.6)', background: '#19171c', height: '25vh', width: '75vw' }}>
                   <Image.Group style={{ whiteSpace: 'nowrap', overflowY: 'hidden', overflowX: 'auto' }} >
                     {this.renderVideos()}
                   </Image.Group>
