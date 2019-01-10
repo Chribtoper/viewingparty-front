@@ -97,7 +97,6 @@ class Room extends Component {
             switch (data.title) {
               case "New message":
                 this.setState({messages: [...this.state.messages, data.body]})
-                this.scrollToBottom(this.state.messages[this.state.messages.length-1])
                 break
               case 'new_youtube_vid':
                 this.setState({videos: [...this.state.videos, data.body.youtube]})
@@ -267,7 +266,7 @@ class Room extends Component {
           return (
             <Message
               key={this.generateRandToken()}
-              ref={(el) => { this.lastMessage = el }}
+              id={`m${message.id}`}
             >
               <Message.Header><Image src={message.icon} avatar /><span>{message.userName}</span></Message.Header>
                 {message.body}
