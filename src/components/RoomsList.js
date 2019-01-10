@@ -96,7 +96,7 @@ class RoomsList extends Component {
                     <Icon inverted name='users' circular />
                   <Header.Content>Rooms</Header.Content>
                 <Grid celled='internally'>
-                  <Grid.Column style={{overflow: 'auto', width: '65vw', maxHeight: window.innerHeight }}>
+                  <Grid.Column style={{overflow: 'auto', width: '65vw', height: '90vh' }}>
                     <Card.Group itemsPerRow={2}>
                       {this.renderRooms()}
                     </Card.Group>
