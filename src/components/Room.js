@@ -277,8 +277,7 @@ class Room extends Component {
     if (this.state.videos) {
       return this.state.videos.map(video => {
         const code = this.regexUrl(video.video_url)
-        const url = `https://img.youtube.com/vi/${code}/maxres
-        default.jpg`
+        const url = `https://img.youtube.com/vi/${code}/hqdefault.jpg`
           return (
             <>
             <Image style={{ height: '25vh', width: '25vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
