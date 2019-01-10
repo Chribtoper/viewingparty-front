@@ -117,8 +117,8 @@ class Room extends Component {
                       videos: data.body.videos,
                       messages: data.body.messages,
                       loaded: true
-                      this.scrollToBottom(this.state.messages[this.state.messages.length-1])
                     })
+                    this.scrollToBottom(this.state.messages[this.state.messages.length-1])
                     if (data.body.videos.length>0) patchVideo(currentRoomId,this.regexUrl(data.body.videos[0].video_url))
                   } else {
                     this.setState({
