@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Redirect, Switch, withRouter } from 'react-router-dom'
@@ -9,19 +9,24 @@ import RoomsPage from './components/RoomsPage.js'
 import NotFound from './components/NotFound.js'
 import Register from './components/Register.js'
 
-const App = (props) => {
-  return (
-    <Fragment>
-          <Switch>
-            <Route exact path="/" render={() => <Redirect to="/rooms" />} />
-            <Route exact path="/profile" component={Profile} />
-            <Route path="/rooms" render={routerProps => <RoomsPage {...routerProps} />} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
-            <Route component={NotFound} />
-          </Switch>
-    </Fragment>
-  )
+class App extends Component {
+
+  render(){
+    document.title = 'Viewing Party'
+    document.body = 'Watch youtube videos in sync with your friends!'
+    return (
+      <Fragment>
+            <Switch>
+              <Route exact path="/" render={() => <Redirect to="/rooms" />} />
+              <Route exact path="/profile" component={Profile} />
+              <Route path="/rooms" render={routerProps => <RoomsPage {...routerProps} />} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/register" component={Register} />
+              <Route component={NotFound} />
+            </Switch>
+      </Fragment>
+    )
+  }
 }
 
 export default withRouter(App);
