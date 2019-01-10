@@ -13,6 +13,7 @@ import Nav from './Nav.js'
 class RoomsPage extends Component {
 
   componentDidMount() {
+    document.title = "Viewing Party"
   }
 
   render(){
