@@ -62,6 +62,10 @@ class Room extends Component {
     console.log("Succesfully cleared subscription")
   }
 
+  scrollToBottom = (lastMessage) => {
+    this.lastMessage.scrollIntoView({ behavior: "smooth" });
+  }
+
   findRoom = (currentRoomId) => {
     return new Promise ((resolve, reject) => {
       fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/rooms/${currentRoomId}`, {
@@ -91,6 +95,7 @@ class Room extends Component {
             switch (data.title) {
               case "New message":
                 this.setState({messages: [...this.state.messages, data.body]})
+                this.scrollToBottom(this.state.messages[this.state.messages.length-1])
                 break
               case 'new_youtube_vid':
                 this.setState({videos: [...this.state.videos, data.body.youtube]})
@@ -112,6 +117,7 @@ class Room extends Component {
                       videos: data.body.videos,
                       messages: data.body.messages,
                       loaded: true
+                      this.scrollToBottom(this.state.messages[this.state.messages.length-1])
                     })
                     if (data.body.videos.length>0) patchVideo(currentRoomId,this.regexUrl(data.body.videos[0].video_url))
                   } else {
