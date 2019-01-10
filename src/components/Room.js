@@ -467,7 +467,7 @@ class Room extends Component {
                   />
                 </Grid.Column>
                 <Grid.Column style={{ textAlign:'left', background: '#201c2b', height: '70vh', width: '25vw' }}>
-                  <Segment style={{ background: '#19171c', whiteSpace: 'wrap',   wordWrap: 'break-word', height: '58vh', overflowY: 'auto', overflowX: 'hidden' }} padded='very'>
+                  <Segment id='messages' style={{ background: '#19171c', whiteSpace: 'wrap',   wordWrap: 'break-word', height: '58vh', overflowY: 'auto', overflowX: 'hidden' }} padded='very'>
                     {this.renderMessages()}
                   </Segment>
                   <SendMessage
