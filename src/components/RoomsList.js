@@ -88,7 +88,7 @@ class RoomsList extends Component {
       </Sidebar>
 
         <Sidebar.Pusher>
-          <Segment style={{height: '80vh'}} basic>
+          <Segment style={{height: '100vh'}} basic>
             { this.state.redirected ?
               <Redirect to={`/rooms/${this.state.roomId}`} render={window.location.reload()} />
                 :
@@ -96,7 +96,7 @@ class RoomsList extends Component {
                     <Icon inverted name='users' circular />
                   <Header.Content>Rooms</Header.Content>
                 <Grid celled='internally'>
-                  <Grid.Column style={{overflow: 'auto', width: '65vw', height: '90vh' }}>
+                  <Grid.Column style={{overflow: 'auto', width: '65vw', height: '80vh' }}>
                     <Card.Group itemsPerRow={2}>
                       {this.renderRooms()}
                     </Card.Group>
