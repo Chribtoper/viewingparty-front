@@ -25,6 +25,8 @@ ReactDOM.render(
     </Router>
   </Provider>,
   document.getElementById('root')
+  document.title = 'Viewing Party'
+  document.body = 'Watch youtube videos in sync with your friends!'
 )
 
 // If you want your app to work offline and load faster, you can change
