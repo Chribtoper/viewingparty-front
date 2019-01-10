@@ -280,8 +280,8 @@ class Room extends Component {
         const url = `https://img.youtube.com/vi/${code}/hqdefault.jpg`
           return (
             <>
-            <Image style={{ height: '25vh', width: '25vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
-            <Button onClick={()=>deleteVideo(this.state.currentRoomId, video.id)} style={{ height: '25vh', width: '3vw' }}negative><Icon fitted name='delete' size='big'/></Button>
+            <Image style={{ height: '20vh', width: '20vw' }} alt={video.id} name={code} onClick={(e)=>this.setCurrentVid(e)} verticalAlign='middle' key={this.generateRandToken()} src={url} size='small'/>
+            <Button onClick={()=>deleteVideo(this.state.currentRoomId, video.id)} style={{ height: '20vh', width: '3vw' }}negative><Icon fitted name='delete' size='big'/></Button>
             </>
           )
       })
@@ -470,7 +470,7 @@ class Room extends Component {
                 <Grid.Column stretched style={{ textAlign:'center', background: '#201c2b', height: '70vh', width: '20vw' }}>
                     {this.renderUsers()}
                 </Grid.Column>
-                <Grid.Column style={{ borderRadius: '2vh', textAlign:'left', boxShadow: '0px -2px 2px rgba(34,34,34,0.6)', background: '#19171c', height: '25vh', width: '75vw' }}>
+                <Grid.Column style={{ borderRadius: '2vh', textAlign:'left', boxShadow: '0px -2px 2px rgba(34,34,34,0.6)', background: '#19171c', height: '25vh', width: '80vw' }}>
                   <Image.Group style={{ whiteSpace: 'nowrap', overflowY: 'hidden', overflowX: 'auto' }} >
                     {this.renderVideos()}
                   </Image.Group>
