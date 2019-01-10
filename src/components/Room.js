@@ -64,6 +64,7 @@ class Room extends Component {
   }
 
   scrollToBottom = (lastMessage) => {
+    debugger
     this.lastMessage.scrollIntoView({ behavior: "smooth" });
   }
 
