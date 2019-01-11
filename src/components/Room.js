@@ -47,7 +47,7 @@ class Room extends Component {
     .then(()=>{
       this.findRoom(currentRoomId)
       console.log(this.props)
-      if (this.state.messages) this.scrollToBottom();
+      if (this.state.messages.length>0) this.scrollToBottom();
         if (this.props.UsersReducer.user.id === this.state.users[0].id) {
           if (this.state.videos.length>0) {
             this.setState({host: true, currentVideo: { url: this.regexUrl(this.state.videos[0].video_url), id: this.state.videos[0].id } })
