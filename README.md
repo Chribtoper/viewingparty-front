@@ -1,7 +1,8 @@
 
 ## Viewing Party
 ## Backend can be found here. It uses postGRESQL https://github.com/Chribtoper/viewingparty-backend/tree/master/app
-This app is currently built only to be run locally on port 4000.
+Master branch is currently built to only operate with my heroku hosted backend.
+Check out a demo of this active project https://viewing-party-app.herokuapp.com
 
 ## What is Viewing Party?
 The Viewing party project was inspired from the times where i'd be watching youtube videos with my friends and want to watch videos in sync. Some of the functionality/visuals is inspired off twitch.tv. If I can watch live streams with friends, why not watch youtube videos in sync wit hfriends? 
