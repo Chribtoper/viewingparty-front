@@ -102,9 +102,6 @@ class RoomsList extends Component {
                     </Card.Group>
 
                   </Grid.Column>
-                  <Grid.Column width={4}>
-
-                  </Grid.Column>
                 </Grid>
                 </Header>
             }
