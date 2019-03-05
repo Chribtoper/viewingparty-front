@@ -65,7 +65,7 @@ class RoomsList extends Component {
   render() {
     return (
     <Sidebar.Pushable fluid style={{ background: '#201c2b', height: '100vh' }} as={Segment}>
-      <Sidebar style={{ background: '#17111e', width: '25vw' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
+      <Sidebar style={{ background: '#17111e', width: '28vw' }} as={Menu} animation='overlay' direction='right' icon='labeled' inverted vertical visible width='very wide'>
         <Menu.Item style={{height: window.innerHeight/4 }}>
           <CreateRoom
             roomName={this.state.roomName}
