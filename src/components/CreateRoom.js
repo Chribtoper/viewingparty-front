@@ -7,7 +7,7 @@ const CreateRoom = (props) => {
     <Label size='massive' pointing='below' color='white'>Create Room</Label>
           <Form.Input
             focus
-            size='huge'
+            size='big'
             action='Create'
             icon='conversation'
             iconPosition='left'
