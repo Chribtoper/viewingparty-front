@@ -33,7 +33,7 @@ class Login extends Component {
         <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' relaxed='very' stackable>
           <Grid.Column style={{ maxWidth: 450 }}>
           <Image centered src='https://i.imgur.com/NWOd34A.png' style={{height: '20vh', width: '70vh',}} />
-          <Segment style={{ background: '#6f5b8c' }} raised padded='very'>
+          <Segment style={{ background: '#6f5b8c' }} raised padded='very'> 
           <Form
             onSubmit={this.handleSubmit}
             size="huge"
